@@ -1,0 +1,8 @@
+[{'title': 'this is a test',
+  'lang': 'en'},
+ {'blocks': [{'inputs': ['what?'], 'type': 'Single Line Texts'},
+             {'inputs': ['is it?', 'yepp', 'nope'], 'type': 'Check Boxes'},
+             {'inputs': ['are you?', 'donno', 'never', 'absolutely!'],
+              'type': 'Multi Line Texts'}],
+  'hint': 'answer fucker!',
+  'type': 'Group'}]

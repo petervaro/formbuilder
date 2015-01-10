@@ -1,0 +1,185 @@
+/* INFO ************************************************************************
+**                                                                            **
+**                                formbuilder                                 **
+**                                ===========                                 **
+**                                                                            **
+**                      Online Form Building Application                      **
+**                       Version: 0.3.01.266 (20150110)                       **
+**                       File: static/css/generator.css                       **
+**                                                                            **
+**               For more information about the project, visit                **
+**                <https://github.com/petervaro/formbuilder>.                 **
+**                       Copyright (C) 2014 Peter Varo                        **
+**                                                                            **
+**  This program is free software: you can redistribute it and/or modify it   **
+**   under the terms of the GNU General Public License as published by the    **
+**       Free Software Foundation, either version 3 of the License, or        **
+**                    (at your option) any later version.                     **
+**                                                                            **
+**    This program is distributed in the hope that it will be useful, but     **
+**         WITHOUT ANY WARRANTY; without even the implied warranty of         **
+**            MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.            **
+**            See the GNU General Public License for more details.            **
+**                                                                            **
+**     You should have received a copy of the GNU General Public License      **
+**     along with this program, most likely a file in the root directory,     **
+**        called 'LICENSE'. If not, see <http://www.gnu.org/licenses>.        **
+**                                                                            **
+************************************************************************ INFO */
+
+@import url(http://fonts.googleapis.com/css?family=Dosis&subset=latin,latin-ext);
+
+body
+{
+    font-family: 'Dosis', sans-serif;
+    color: #303030;
+    background: #f0f0f0;
+}
+
+textarea
+{
+    resize: vertical;
+}
+
+#fb-menu
+{
+    padding: 10pt 0;
+    position: fixed;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.75);
+    border-bottom: 1pt solid #e8e8e8;
+    z-index: 9999;
+}
+
+#fb-menu-parts-add,
+.fb-content-form-block-remove,
+.fb-content-form-block-option-add,
+.fb-content-form-block-option-remove
+{
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+#fb-menu-parts-add
+{
+    background: #0099FF;
+    color: white;
+    padding: 4pt;
+    border-radius: 4pt;
+    text-transform: uppercase;
+}
+
+#fb-menu-parts-add,
+#fb-menu-parts-info,
+#fb-menu-parts-info-title,
+#fb-menu-parts-info-language
+{
+    display: inline-block;
+}
+
+#fb-menu-parts-add,
+#fb-menu-parts-info-title,
+#fb-menu-parts-info-language
+{
+    margin: 0 4pt;
+}
+
+#fb-content,
+#fb-menu-parts
+{
+    width: 512pt;
+    margin: 0 auto;
+}
+
+#fb-menu-parts
+{
+    text-align: center;
+}
+
+#fb-content
+{
+    padding: 64pt 16pt 16pt;
+    background: white;
+    border-left : 1pt solid #e8e8e8;
+    border-right: 1pt solid #e8e8e8;
+    border-bottom: 1pt solid #e8e8e8;
+}
+
+.fb-content-form-block
+{
+    border-top: 1pt solid #e8e8e8;
+    position: relative;
+    width: 100%;
+}
+
+.fb-content-form-block-label,
+.fb-content-form-block-remove
+{
+    padding: 2pt;
+    display: inline-block;
+    clear: both;
+}
+
+.fb-content-form-block-label
+{
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: #e8e8e8;
+    color: #808080;
+}
+
+.fb-content-form-block-remove
+{
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: #CC3300;
+    color: white;
+    text-transform: uppercase;
+}
+
+.fb-content-form-block-body
+{
+    padding: 10pt;
+}
+
+.fb-content-form-block-field
+{
+    margin: 4pt 0;
+    width: 100%;
+}
+
+.fb-content-form-block-option-add,
+.fb-content-form-block-option-remove
+
+{
+    display: inline-block;
+    clear: both;
+    color: white;
+    padding: 4pt;
+    text-transform: uppercase;
+}
+
+.fb-content-form-block-option-add
+{
+    background: #0099FF;
+}
+
+.fb-content-form-block-option-remove
+{
+    background: #CC3300;
+}
+
+#fb-menu-parts-add-options
+{
+    text-transform: none;
+}
+
+.fb-content-form-block-caption
+{
+    margin-top: 4pt 0;
+}

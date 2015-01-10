@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ data.title }}</title>
+    <link rel="stylesheet"
+          type="text/css"
+          href="{{ url_for('static', filename='css/reset.css') }}">
+    <link rel="stylesheet"
+          type="text/css"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div id="content">
+        <h1 id="title">{{ data.title }}</h1>
+        {% for block, questions in data.blocks.items() %}
+            <h2 class="section">{{ block }}</h2>
+            {% for question in questions %}
+                {% if question.question %}
+                    {% if  %}
+                    <div class="question-block">
+                    {% if question.type == 'TEXT' %}
+                        <form>
+                            <p class="question-text">{{ question.question }}</p>
+                            <div class="question-hint-block">
+                                <q class="question-hint">
+                                    {{ data.HINT.upper() }}: {{ question.hint }}
+                                </q>
+                            </div>
+                            <input type="text"
+                                   name="{{ question.index }}"
+                                   class="input">
+                        </form>
+                    {% elif question.type == 'AREA' %}
+                        <form>
+                            <p class="question-text">{{ question.question }}</p>
+                            <div class="question-hint-block">
+                                <q class="question-hint">
+                                    {{ data.HINT.upper() }}: {{ question.hint }}
+                                </q>
+                            </div>
+                            <textarea name="{{ question.index }}"
+                                      class="input"></textarea>
+                        </form>
+                    {% endif %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+    </div>
+</body>
+</html>
