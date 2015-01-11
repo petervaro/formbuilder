@@ -4,7 +4,7 @@
 **                                ===========                                 **
 **                                                                            **
 **                      Online Form Building Application                      **
-**                       Version: 0.3.01.266 (20150110)                       **
+**                       Version: 0.3.01.301 (20150111)                       **
 **                          File: static/js/units.js                          **
 **                                                                            **
 **               For more information about the project, visit                **
@@ -32,66 +32,125 @@
 
 /*----------------------------------------------------------------------------*/
 /* Base-class of all unit-objects */
-function FormUnit()
+function Unit(args)
 {
+    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    this.render = function()
+    {
+        // pass
+    };
 
-}
-
-/* Public objects (in 'units' name-space) */
-var units = {
-/*----------------------------------------------------------------------------*/
-/*  */
-SingleLineTextFormUnit: function(captionText, defaultText, classPrefix)
-{
-    /* Inherit from base-class */
-    FormUnit.apply(this);
-
-    /* Store values */
-    this._captionText = captionText || 'Caption';
-    this._defaultText = defaultText || 'Default text';
-    this._classPrefix = classPrefix || '';
 
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.buildHTML = function(parent)
+    this.serialise = function()
     {
-        var element;
-        element = document.createElement('p');
-        element.className = this._classPrefix + 'caption';
-        element.innerHTML = this._captionText;
-        parent.appendChild(element);
+        // pass
+    };
 
-        element = document.createElement('');
-        element.className = this._classPrefix + 'field';
-        element.value = this._defaultText;
-        parent.appendChild(element);
+
+    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    this.deserialise = function()
+    {
+        // pass
     };
 }
 
 
+
+/* Public objects (in 'units' name-space) */
+var units = {
 /*----------------------------------------------------------------------------*/
-MultiLineTextFormUnit: function(captionText, defaultText, classPrefix)
+StaticTextUnit: function(args)
 {
-    /* Inherit from base-class */
-    FormUnit.apply(this);
+    /* Initialisation */
+    args = args || {};
+    Unit.call(this, args);
+    this._type = 'StaticTextUnit';
 
     /* Store values */
-    this._captionText = captionText || 'Caption';
-    this._defaultText = defaultText || 'Default text';
-    this._classPrefix = classPrefix || '';
+    this._captionText = args.captionText || 'Caption';
+    this._classPrefix = args.classPrefix || '';
+
 
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.buildHTML = function(parent)
+    this.render = function(parent)
     {
-        var element;
-        element = document.createElement('p');
-        element.className = this._classPrefix + 'caption';
+        /* Add input */
+        var element = document.createElement('p');
+        element.className = this._classPrefix + '-caption';
         element.innerHTML = this._captionText;
         parent.appendChild(element);
+    };
+},
 
-        element = document.createElement('textarea');
-        element.className = this._classPrefix + 'field';
+
+
+/*----------------------------------------------------------------------------*/
+/*  */
+SingleLineTextInputUnit: function(args)
+{
+    /* Initialisation */
+    args = args || {};
+    Unit.call(this, args);
+    this._type = 'SingleLineTextInputUnit';
+
+    /* Store values */
+    this._captionText = args.captionText || 'Caption';
+    this._defaultText = args.defaultText || 'Default text';
+    this._classPrefix = args.classPrefix || '';
+
+
+    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    this.render = function(parent)
+    {
+        /* Add input */
+        var element = this._userValue = document.createElement('input');
+        element.className = this._classPrefix + '-field';
+        element.type = 'text';
         element.value = this._defaultText;
         parent.appendChild(element);
+    };
+
+
+    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    this.serialise = function()
+    {
+        return [{type  : this._type,
+                 label : this._userValue.value}];
+    };
+},
+
+
+/*----------------------------------------------------------------------------*/
+MultiLineTextInputUnit: function(args)
+{
+    /* Initialisation */
+    args = args || {};
+    Unit.call(this, args);
+    this._type = 'MultiLineTextInputUnit';
+
+    /* Store values */
+    this._captionText = args.captionText || 'Caption';
+    this._defaultText = args.defaultText || 'Default text';
+    this._classPrefix = args.classPrefix || '';
+
+
+    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    this.render = function(parent)
+    {
+        /* Add textarea */
+        var element = this._userValue = document.createElement('textarea');
+        element.className = this._classPrefix + '-field';
+        element.value = this._defaultText;
+        parent.appendChild(element);
+    };
+
+
+    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    this.serialise = function()
+    {
+        return [{type  : this._type,
+                 label : this._userValue.value}];
     };
 }
 

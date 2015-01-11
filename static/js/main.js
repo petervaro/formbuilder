@@ -4,7 +4,7 @@
 **                                ===========                                 **
 **                                                                            **
 **                      Online Form Building Application                      **
-**                       Version: 0.3.01.266 (20150110)                       **
+**                       Version: 0.3.01.304 (20150111)                       **
 **                          File: static/js/main.js                           **
 **                                                                            **
 **               For more information about the project, visit                **
@@ -35,10 +35,50 @@ function main()
 {
     'use strict';
 
-    var fb = new g.formbuilder.FormBuilder();
+    /* Name-space */
+    var ns = 'fb-content';
 
-    fb.pushBlock(new g.blocks.SingleTextInputBlock('Section Block'));
-    fb.pushBlock(new g.blocks.SingleTextInputBlockWithHelp('Question Block'));
+    /* Application */
+    var fb = new g.formbuilder.FormBuilder({
+        menu   : document.getElementById('menu'),
+        blocks : document.getElementById('blocks'),
+    });
 
-    console.log(fb.getAllBlocks());
+    /* HACK: This is here for testing purpose only!!! */
+    fb._lang  = 'hu';
+    fb._title = 'test form';
+
+    /* Specify section-block */
+    fb.registerBlockPrototype({
+        object    : g.blocks.SingleTextInputBlock,
+        details   : {
+            blockName   : 'Section Block',
+            inputLabel  : 'Label:',
+            inputText   : 'Title of this section...',
+            classPrefix : ns,
+        }}, 'section');
+
+    /* Specify label-block */
+    fb.registerBlockPrototype({
+        object    : g.blocks.SingleTextInputBlockWithHelp,
+        details   : {
+            blockName   : 'Question Block',
+            inputLabel  : 'Question:',
+            inputText   : 'A question goes here...',
+            helpText    : 'Add hints to the question...',
+            classPrefix : ns,
+        }}, 'question');
+
+    /* Render application */
+    fb.render();
+
+    /* Create block-instances */
+    fb.newBlockInstance('section');
+    fb.newBlockInstance('question');
+    fb.newBlockInstance('question');
+
+    /* Serialise what we have so far */
+    // console.log(JSON.stringify(fb.serialise()));
+    fb.saveData();
+    fb.loadData();
 }

@@ -4,8 +4,8 @@
 ##                                ===========                                 ##
 ##                                                                            ##
 ##                      Online Form Building Application                      ##
-##                       Version: 0.3.01.266 (20150110)                       ##
-##                         File: appform_generator.py                         ##
+##                       Version: 0.3.01.311 (20150112)                       ##
+##                               File: data.py                                ##
 ##                                                                            ##
 ##               For more information about the project, visit                ##
 ##                <https://github.com/petervaro/formbuilder>.                 ##
@@ -27,8 +27,37 @@
 ##                                                                            ##
 ######################################################################## INFO ##
 
+# IMport python modules
+from os import makedirs
+from os.path import join
+from string import ascii_letters, digits
+from pickle import dump, load, HIGHEST_PROTOCOL
+
+# Module level private constants
+_ASCII = ascii_letters + digits
+_NAME = '{}_{}'
+_PATH = 'forms'
+
+#------------------------------------------------------------------------------#
+def _format_file_name(string, lang):
+    return _NAME.format(''.join(c if c in _ASCII else '_' for c in string), lang)
 
 
-class AppFormGenerator:
+#------------------------------------------------------------------------------#
+def save_file(data):
+    path = join(_PATH, _format_file_name(data['title'], data['lang']))
+    for i in range(2):
+        try:
+            with open(path, 'wb') as file:
+                dump(data, file, protocol=HIGHEST_PROTOCOL)
+                break
+        except FileNotFoundError as e:
+            makedirs(_PATH)
+    else:
+        print('An error occured during saving {}'.format(path))
 
-    pass
+
+#------------------------------------------------------------------------------#
+def load_file(path):
+    with open(path, 'rb') as file:
+        return load(file)

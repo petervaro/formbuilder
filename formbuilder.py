@@ -1,12 +1,12 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 ## INFO ########################################################################
 ##                                                                            ##
 ##                                formbuilder                                 ##
 ##                                ===========                                 ##
 ##                                                                            ##
 ##                      Online Form Building Application                      ##
-##                       Version: 0.3.01.266 (20150110)                       ##
-##                               File: _main.py                               ##
+##                       Version: 0.3.01.311 (20150112)                       ##
+##                            File: formbuilder.py                            ##
 ##                                                                            ##
 ##               For more information about the project, visit                ##
 ##                <https://github.com/petervaro/formbuilder>.                 ##
@@ -28,15 +28,36 @@
 ##                                                                            ##
 ######################################################################## INFO ##
 
-from flask import Flask, render_template
+# Import flask modules and functions
+from flask import Flask, render_template, jsonify, request
 
+# Import formbuilder modules
+from data import save_file, load_file
+
+#------------------------------------------------------------------------------#
 app = Flask(__name__)
 
+
+
+#------------------------------------------------------------------------------#
 @app.route('/')
-def hello_world():
-    return render_template('appform.html')
+def index():
+    return render_template('formbuilder.html')
 
 
+
+#------------------------------------------------------------------------------#
+@app.route('/data', methods=['GET', 'POST'])
+def data():
+    if request.method == 'POST':
+        save_file(request.get_json(force=True))
+        return ''
+    else:
+        return jsonify(load_file('forms/test_form_hu'))
+
+
+
+#------------------------------------------------------------------------------#
 if __name__ == '__main__':
     app.debug = True
     app.run()

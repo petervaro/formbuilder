@@ -5,15 +5,15 @@
         <title>Form Builder</title>
         <!-- main.js has to be first -->
         <script type="text/javascript"
-                src="static/js/main.js"></script>
+                src="{{ url_for('static', filename='js/main.js') }}"></script>
         <!-- units.js has to be placed before blocks.js -->
         <script type="text/javascript"
-                src="static/js/units.js"></script>
+                src="{{ url_for('static', filename='js/units.js') }}"></script>
         <script type="text/javascript"
                 src="static/js/blocks.js"></script>
         <!-- formbuilder.js has to be the last one -->
         <script type="text/javascript"
-                src="static/js/formbuilder.js"></script>
+                src="{{ url_for('static', filename='js/formbuilder.js') }}"></script>
     </head>
     <body>
         <div id="menu">

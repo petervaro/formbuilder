@@ -4,7 +4,7 @@
 **                                ===========                                 **
 **                                                                            **
 **                      Online Form Building Application                      **
-**                       Version: 0.3.01.266 (20150110)                       **
+**                       Version: 0.3.01.298 (20150111)                       **
 **                         File: static/js/blocks.js                          **
 **                                                                            **
 **               For more information about the project, visit                **
@@ -32,107 +32,127 @@
 /* Private objects */
 
 /*----------------------------------------------------------------------------*/
-/* Base-class of all block-objects */
-function FormBlockObject(blockName)
+/* Base-class of all block-objects, requires:
+    - blockName */
+function FormBlockObject(args)
 {
-
     /* Set default values */
-    this._name  = blockName || 'Unnamed Block';
-    this._inputs = [];
+    this._name  = args.blockName || 'Unnamed Block';
+    this._classPrefix = (args.classPrefix || '') + '-block';
+    this._units = [];
+
 
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.getStruct = function()
+    this.setId = function(blockId)
     {
-        return this._struct;
+        this._id = blockId;
     };
 
+
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.buildHTML = function(parent)
+    this.setType = function(blockType)
     {
-        return;
+        this._type = blockType;
+    };
+
+
+    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    this.serialise = function()
+    {
+        var output = [],
+            units = this._units;
+
+        for (var i=0; i<units.length; i++)
+            output.push(units[i].serialise());
+
+        return output;
+    };
+
+
+    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    this.render = function(parent)
+    {
+        /* Create container for block */
+        var element = this._element = document.createElement('div');
+        element.className = this._classPrefix;
+        parent.appendChild(element);
+
+        /* Build all units */
+        var units = this._units;
+        for (var i=0; i<units.length; i++)
+            units[i].render(element);
     };
 }
 
 
-/*----------------------------------------------------------------------------*/
-function addBlockOptions(parent, blockOptions)
-{
-    if (blockOptions)
-    {
-        /* Add hint field to the block */
-        if (blockOptions.hasHint)
-        {
-            element = document.createElement('p');
-            element.className = 'fb-content-form-block-caption';
-            element.innerHTML = 'Hint:';
-            parent.appendChild(element);
-
-            element = document.createElement('textarea');
-            element.className = 'fb-content-form-block-field';
-            element.value = 'Help text for this input';
-            parent.appendChild(element);
-        }
-
-        /* Add limiter field to the block */
-        if (blockOptions.hasLimiter)
-        {
-            element = document.createElement('p');
-            element.className = 'fb-content-form-block-caption';
-            element.innerHTML = 'Limit maximum length:';
-            parent.appendChild(element);
-
-            element = document.createElement('input');
-            element.className = 'fb-content-form-block-field';
-            element.type = 'text';
-            element.value = 0;
-            parent.appendChild(element);
-        }
-    }
-}
 
 /* Public objects (in 'blocks' name-space) */
 var blocks = {
 
 /*----------------------------------------------------------------------------*/
-SingleTextInputBlock: function(blockName, blockType, inputLabel)
+/* Valid args-object properties:
+    - blockName
+    - inputLabel
+    - inputText
+    - classPrefix */
+SingleTextInputBlock: function(args)
 {
     /* Initialisation */
-    var args = Array.prototype.slice(arguments).slice(1);
-    FormBlockObject.apply(this, args);
+    args = args || {};
+    FormBlockObject.call(this, args);
 
-    /* Set default values */
+    /* Set inputs of this block */
     this._units = [
-        new g.units.SingleLineTextFormUnit(),
+        new g.units.StaticTextUnit({captionText: args.inputLabel,
+                                    classPrefix: this._classPrefix}),
+        new g.units.SingleLineTextInputUnit({defaultText: args.inputText,
+                                             classPrefix: this._classPrefix}),
     ];
-    this._inputLabel = inputLabel || 'Untitled Input';
+
 
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.getStruct = function()
+    this.serialise = function()
     {
-        /* Construct output */
-        return;
-    };
+        var units = this._units,
+            data  = {type   : this._type,
+                     inputs : []};
 
-    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.buildHTML = function(parent)
-    {
-        /* Build all units */
-        var units = this._units;
+        /* Collect all data from units */
+        var serial,
+            data_inputs = data.inputs;
         for (var i=0; i<units.length; i++)
-            units[i].buildHTML(parent);
+        {
+            serial = units[i].serialise();
+            if (serial)
+                data_inputs.push(serial);
+        }
+
+        /* Return the serialisation */
+        return data;
     };
 },
 
 
+
 /*----------------------------------------------------------------------------*/
-SingleTextInputBlockWithHelp: function(inputLabel)
+/* Valid args-object properties:
+    - blockName
+    - inputLabel
+    - inputText
+    - classPrefix */
+SingleTextInputBlockWithHelp: function(args)
 {
     /* Initialisation */
-    var args = Array.prototype.slice(arguments).slice(1);
-    FormBlockObject.apply(this, args);
+    args = args || {};
+    FormBlockObject.call(this, args);
 
-    /* Set default values */
-    this._inputLabel = inputLabel || 'Untitled Input';
+    /* Set inputs of this block */
+    this._units = [
+        new g.units.StaticTextUnit({captionText: args.inputLabel,
+                                    classPrefix: this._classPrefix}),
+        new g.units.MultiLineTextInputUnit({defaultText: args.inputText,
+                                            classPrefix: this._classPrefix}),
+    ];
 },
 
 }; /* End of 'blocks' name-space */
