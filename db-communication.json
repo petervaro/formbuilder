@@ -1,0 +1,22 @@
+{
+    "uid": "<int>",
+    "secret": "",
+    "inputs":
+    [
+        {
+            "uid"    : "<int>",
+            "type"   : "<string | int | float | array>",
+            "length" : "<int>"
+        },
+        {
+            "uid"    : "<int>",
+            "type"   : "<string | int | float | array>",
+            "length" : "<int>"
+        },
+        {
+            "uid"    : "<int>",
+            "type"   : "<string | int | float | array>",
+            "length" : "<int>"
+        },
+    ]
+}

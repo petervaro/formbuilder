@@ -4,7 +4,7 @@
 **                                ===========                                 **
 **                                                                            **
 **                      Online Form Building Application                      **
-**                       Version: 0.3.01.301 (20150111)                       **
+**                       Version: 0.3.01.315 (20150113)                       **
 **                          File: static/js/units.js                          **
 **                                                                            **
 **               For more information about the project, visit                **
@@ -86,7 +86,6 @@ StaticTextUnit: function(args)
 
 
 /*----------------------------------------------------------------------------*/
-/*  */
 SingleLineTextInputUnit: function(args)
 {
     /* Initialisation */

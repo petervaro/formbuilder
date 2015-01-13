@@ -4,7 +4,7 @@
 **                                ===========                                 **
 **                                                                            **
 **                      Online Form Building Application                      **
-**                       Version: 0.3.01.304 (20150111)                       **
+**                       Version: 0.3.01.315 (20150113)                       **
 **                          File: static/js/main.js                           **
 **                                                                            **
 **               For more information about the project, visit                **
@@ -35,13 +35,11 @@ function main()
 {
     'use strict';
 
-    /* Name-space */
-    var ns = 'fb-content';
-
     /* Application */
     var fb = new g.formbuilder.FormBuilder({
-        menu   : document.getElementById('menu'),
-        blocks : document.getElementById('blocks'),
+        DOMMenuElement   : document.getElementById('menu'),
+        DOMBlocksElement : document.getElementById('blocks'),
+        CSSNameSpace     : 'fb',
     });
 
     /* HACK: This is here for testing purpose only!!! */
@@ -55,7 +53,6 @@ function main()
             blockName   : 'Section Block',
             inputLabel  : 'Label:',
             inputText   : 'Title of this section...',
-            classPrefix : ns,
         }}, 'section');
 
     /* Specify label-block */
@@ -66,7 +63,6 @@ function main()
             inputLabel  : 'Question:',
             inputText   : 'A question goes here...',
             helpText    : 'Add hints to the question...',
-            classPrefix : ns,
         }}, 'question');
 
     /* Render application */
@@ -80,5 +76,5 @@ function main()
     /* Serialise what we have so far */
     // console.log(JSON.stringify(fb.serialise()));
     fb.saveData();
-    fb.loadData();
+    console.log(fb.loadForm());
 }

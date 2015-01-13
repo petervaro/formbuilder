@@ -4,7 +4,7 @@
 ##                                ===========                                 ##
 ##                                                                            ##
 ##                      Online Form Building Application                      ##
-##                       Version: 0.3.01.314 (20150112)                       ##
+##                       Version: 0.3.01.321 (20150113)                       ##
 ##                                 File: TODO                                 ##
 ##                                                                            ##
 ##               For more information about the project, visit                ##
@@ -27,7 +27,7 @@
 ##                                                                            ##
 ######################################################################## INFO ##
 
-#----------------------------- 5 POSTS IN 4 FILES -----------------------------#
+#----------------------------- 6 POSTS IN 5 FILES -----------------------------#
 TODO:
   #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
   # 1
@@ -64,6 +64,13 @@ TODO:
     note: |
           This is the same as _checkboxBlock() 
 
+  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
+  # 6
+  - file: formbuilder.py
+    line: 46
+    note: |
+          authenticate user to get access to builder
+
 
 
 #----------------------------- 1 POSTS IN 1 FILES -----------------------------#
@@ -71,12 +78,8 @@ HACK:
   #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
   # 1
   - file: static/js/main.js
-    line: 47
+    line: 45
     note: |
           This is here for testing purpose only!!! 
 
-
-
-#----------------------------- 0 POSTS IN 0 FILES -----------------------------#
-ALERT:
 

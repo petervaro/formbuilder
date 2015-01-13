@@ -5,7 +5,7 @@
 ##                                ===========                                 ##
 ##                                                                            ##
 ##                      Online Form Building Application                      ##
-##                       Version: 0.3.01.311 (20150112)                       ##
+##                       Version: 0.3.01.318 (20150113)                       ##
 ##                            File: formbuilder.py                            ##
 ##                                                                            ##
 ##               For more information about the project, visit                ##
@@ -32,16 +32,18 @@
 from flask import Flask, render_template, jsonify, request
 
 # Import formbuilder modules
-from data import save_file, load_file
+from filemanager import FileManager
 
 #------------------------------------------------------------------------------#
 app = Flask(__name__)
+fm  = FileManager()
 
 
 
 #------------------------------------------------------------------------------#
 @app.route('/')
 def index():
+    # TODO: authenticate user to get access to builder
     return render_template('formbuilder.html')
 
 
@@ -49,11 +51,17 @@ def index():
 #------------------------------------------------------------------------------#
 @app.route('/data', methods=['GET', 'POST'])
 def data():
+    # If client posted a new form
     if request.method == 'POST':
-        save_file(request.get_json(force=True))
-        return ''
-    else:
-        return jsonify(load_file('forms/test_form_hu'))
+        fm.dump(request.get_json(force=True))
+        return jsonify(status=True)
+
+    # If client requested an actual form
+    try:
+        return jsonify(fm.load(request.args['form']))
+    # If client requested the list of available forms
+    except KeyError:
+        return jsonify(fm.list())
 
 
 

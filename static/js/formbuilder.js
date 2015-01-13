@@ -4,7 +4,7 @@
 **                                ===========                                 **
 **                                                                            **
 **                      Online Form Building Application                      **
-**                       Version: 0.3.01.304 (20150111)                       **
+**                       Version: 0.3.01.315 (20150113)                       **
 **                       File: static/js/formbuilder.js                       **
 **                                                                            **
 **               For more information about the project, visit                **
@@ -30,6 +30,32 @@
 (function(){
 'use strict';
 
+// function requestData(url)
+// {
+//     var request = new XMLHttpRequest();
+//     request.open('GET', '/data', true);
+
+//     request.onload = function()
+//     {
+//         /* If successful */
+//         if (this.status >= 200 && this.status < 400)
+//         {
+//             this.deserialise(JSON.parse(this.response));
+//         }
+//         else
+//         {
+//             // pass
+//         }
+//     };
+
+//     request.onerror = function()
+//     {
+//         // There was a connection error of some sort
+//     };
+
+//     request.send();
+// }
+
 /* Public objects (in 'formbuilder' name-space) */
 var formbuilder = {
 
@@ -48,13 +74,25 @@ FormBuilder: function(args)
     this._blocks = [];
 
     /* DOM parents */
-    this._controlParent = args.menu;
-    this._blocksParent  = args.blocks;
+    var element = args.menu;
+    if (!(element instanceof HTMLElement))
+        throw "FormBuilder()  =>  Missing 'menu' DOM-object";
+    this._controlParent = element;
+
+    element = args.blocks;
+    if (!(element instanceof HTMLElement))
+        throw "FormBuilder()  => Missing 'blocks' DOM-object";
+    this._blocksParent = element;
 
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
     this.render = function()
     {
-        // pass
+        var element = document.createElement('div');
+        element.className = this._classPrefix
+
+
+
+        this._controlParent.appendChild();
     };
 
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
@@ -62,7 +100,10 @@ FormBuilder: function(args)
     {
         /* Get or set reference, store prototype and return it*/
         reference = reference || this._protoId++;
-        this._protos[reference] = prototype || {};
+        prototype = prototype || {};
+        prototype.classPrefix = prototype.classPrefix ||
+                                this._classPrefix + '-content';
+        this._protos[reference] = prototype;
         return reference;
     };
 
@@ -104,7 +145,7 @@ FormBuilder: function(args)
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
     this.deserialise = function(data)
     {
-        // pass
+        console.log(data);
     };
 
 
@@ -129,19 +170,48 @@ FormBuilder: function(args)
 
 
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.saveData = function()
+    this.saveForm = function()
     {
         var request = new XMLHttpRequest();
         request.open('POST', '/data', true);
         request.setRequestHeader('Content-Type',
                                  'application/x-www-form-urlencoded;'+
                                  'charset=UTF-8');
+        console.log(JSON.stringify(this.serialise()));
         request.send(JSON.stringify(this.serialise()));
     }
 
 
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.loadData = function()
+    this.loadForm = function(formId)
+    {
+        var request = new XMLHttpRequest();
+        request.open('GET', '/data?form=' + formId, true);
+
+        request.onload = function()
+        {
+            /* If successful */
+            if (this.status >= 200 && this.status < 400)
+            {
+                this.deserialise(JSON.parse(this.response));
+            }
+            else
+            {
+                // pass
+            }
+        };
+
+        request.onerror = function()
+        {
+            // There was a connection error of some sort
+        };
+
+        request.send();
+    }
+
+
+    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    this.loadList = function()
     {
         var request = new XMLHttpRequest();
         request.open('GET', '/data', true);
@@ -151,8 +221,7 @@ FormBuilder: function(args)
             /* If successful */
             if (this.status >= 200 && this.status < 400)
             {
-                console.log(JSON.parse(this.response));
-                // this.deserialise(JSON.parse(this.response));
+                this.deserialise(JSON.parse(this.response));
             }
             else
             {

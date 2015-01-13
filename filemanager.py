@@ -4,8 +4,8 @@
 ##                                ===========                                 ##
 ##                                                                            ##
 ##                      Online Form Building Application                      ##
-##                       Version: 0.3.01.311 (20150112)                       ##
-##                               File: data.py                                ##
+##                       Version: 0.3.01.318 (20150113)                       ##
+##                            File: filemanager.py                            ##
 ##                                                                            ##
 ##               For more information about the project, visit                ##
 ##                <https://github.com/petervaro/formbuilder>.                 ##
@@ -30,6 +30,7 @@
 # IMport python modules
 from os import makedirs
 from os.path import join
+from itertools import count
 from string import ascii_letters, digits
 from pickle import dump, load, HIGHEST_PROTOCOL
 
@@ -38,26 +39,51 @@ _ASCII = ascii_letters + digits
 _NAME = '{}_{}'
 _PATH = 'forms'
 
+
 #------------------------------------------------------------------------------#
 def _format_file_name(string, lang):
     return _NAME.format(''.join(c if c in _ASCII else '_' for c in string), lang)
 
 
+
 #------------------------------------------------------------------------------#
-def save_file(data):
-    path = join(_PATH, _format_file_name(data['title'], data['lang']))
-    for i in range(2):
+class FileManager:
+
+    #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
+    def __init__(self):
+        self._id   = count()
+        self._data = {}
+
+
+    #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
+    def load(self, path):
+        return ''
+        #
         try:
-            with open(path, 'wb') as file:
-                dump(data, file, protocol=HIGHEST_PROTOCOL)
-                break
-        except FileNotFoundError as e:
-            makedirs(_PATH)
-    else:
-        print('An error occured during saving {}'.format(path))
+            data = self._data['']
+        except KeyError:
+            with open(path, 'rb') as file:
+                data = load(file)
+        return data
 
 
-#------------------------------------------------------------------------------#
-def load_file(path):
-    with open(path, 'rb') as file:
-        return load(file)
+    #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
+    def dump(self, data):
+        return ''
+        path = join(_PATH, _format_file_name(data['title'], data['lang']))
+        for i in range(2):
+            try:
+                with open(path, 'wb') as file:
+                    self._data[''] = data
+                    dump(data, file, protocol=HIGHEST_PROTOCOL)
+                    break
+            # If path does not exist
+            except FileNotFoundError as e:
+                makedirs(_PATH)
+        else:
+            print('An error occured during saving {}'.format(path))
+
+
+    #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
+    def list(self):
+        return ''
