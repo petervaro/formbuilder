@@ -4,7 +4,7 @@
 ##                                ===========                                 ##
 ##                                                                            ##
 ##                      Online Form Building Application                      ##
-##                       Version: 0.3.01.321 (20150113)                       ##
+##                       Version: 0.3.01.400 (20150118)                       ##
 ##                                 File: TODO                                 ##
 ##                                                                            ##
 ##               For more information about the project, visit                ##
@@ -27,49 +27,56 @@
 ##                                                                            ##
 ######################################################################## INFO ##
 
-#----------------------------- 6 POSTS IN 5 FILES -----------------------------#
+#----------------------------- 7 POSTS IN 6 FILES -----------------------------#
 TODO:
   #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
   # 1
+  - file: formbuilder.py
+    line: 46
+    note: |
+          authenticate user to get access to builder
+
+  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
+  # 2
   - file: configurator_gui/blocks.py
     line: 37
     note: |
           remove NumVar as it is not in use anymore.. probably? ;)
 
   #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
-  # 2
+  # 3
   - file: configurator_gui/main.py
     line: 134
     note: |
           <kill menu, title and language here>
 
   #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
-  # 3
+  # 4
   - file: configurator_gui/utils.py
     line: 153
     note: |
           decorate with operators
 
   #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
-  # 4
+  # 5
   - file: static/js/generator.js
     line: 74
     note: |
           This is the same as _singlelineBlock() 
 
   #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
-  # 5
+  # 6
   - file: static/js/generator.js
     line: 138
     note: |
           This is the same as _checkboxBlock() 
 
   #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
-  # 6
-  - file: formbuilder.py
-    line: 46
+  # 7
+  - file: build.py
+    line: 44
     note: |
-          authenticate user to get access to builder
+          add `>>>` as `MARKER` => `this is where I left`
 
 
 
@@ -78,8 +85,12 @@ HACK:
   #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
   # 1
   - file: static/js/main.js
-    line: 45
+    line: 69
     note: |
-          This is here for testing purpose only!!! 
+          for testing purposes only
 
+
+
+#----------------------------- 0 POSTS IN 0 FILES -----------------------------#
+ALERT:
 

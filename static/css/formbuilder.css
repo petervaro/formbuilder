@@ -4,8 +4,8 @@
 **                                ===========                                 **
 **                                                                            **
 **                      Online Form Building Application                      **
-**                       Version: 0.3.01.266 (20150110)                       **
-**                       File: static/css/generator.css                       **
+**                       Version: 0.3.01.391 (20150118)                       **
+**                      File: static/css/formbuilder.css                      **
 **                                                                            **
 **               For more information about the project, visit                **
 **                <https://github.com/petervaro/formbuilder>.                 **
@@ -51,7 +51,7 @@ textarea
     z-index: 9999;
 }
 
-#fb-menu-parts-add,
+.fb-menu-items-add,
 .fb-content-form-block-remove,
 .fb-content-form-block-option-add,
 .fb-content-form-block-option-remove
@@ -63,7 +63,7 @@ textarea
     user-select: none;
 }
 
-#fb-menu-parts-add
+.fb-menu-items-add
 {
     background: #0099FF;
     color: white;
@@ -72,34 +72,34 @@ textarea
     text-transform: uppercase;
 }
 
-#fb-menu-parts-add,
-#fb-menu-parts-info,
-#fb-menu-parts-info-title,
-#fb-menu-parts-info-language
+.fb-menu-items-add,
+.fb-menu-items-info,
+.fb-menu-items-info-title,
+.fb-menu-items-info-language
 {
     display: inline-block;
 }
 
-#fb-menu-parts-add,
-#fb-menu-parts-info-title,
-#fb-menu-parts-info-language
+.fb-menu-items-add,
+.fb-menu-items-info-title,
+.fb-menu-items-info-language
 {
     margin: 0 4pt;
 }
 
-#fb-content,
-#fb-menu-parts
+#fb-blocks,
+.fb-menu-items
 {
     width: 512pt;
     margin: 0 auto;
 }
 
-#fb-menu-parts
+.fb-menu-items
 {
     text-align: center;
 }
 
-#fb-content
+#fb-blocks
 {
     padding: 64pt 16pt 16pt;
     background: white;
@@ -174,7 +174,7 @@ textarea
     background: #CC3300;
 }
 
-#fb-menu-parts-add-options
+.fb-menu-items-add-options
 {
     text-transform: none;
 }

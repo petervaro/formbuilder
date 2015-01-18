@@ -4,7 +4,7 @@
 **                                ===========                                 **
 **                                                                            **
 **                      Online Form Building Application                      **
-**                       Version: 0.3.01.298 (20150111)                       **
+**                       Version: 0.3.01.322 (20150118)                       **
 **                         File: static/js/blocks.js                          **
 **                                                                            **
 **               For more information about the project, visit                **
@@ -29,6 +29,11 @@
 
 (function(){
 'use strict';
+
+/* Include order check */
+if (!g.units)
+    throw "'blocks.js' has to be placed after 'units.js'";
+
 /* Private objects */
 
 /*----------------------------------------------------------------------------*/

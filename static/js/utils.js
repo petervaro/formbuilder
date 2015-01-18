@@ -4,8 +4,8 @@
 **                                ===========                                 **
 **                                                                            **
 **                      Online Form Building Application                      **
-**                       Version: 0.3.01.398 (20150118)                       **
-**                          File: static/js/main.js                           **
+**                       Version: 0.3.01.391 (20150118)                       **
+**                          File: static/js/utils.js                          **
 **                                                                            **
 **               For more information about the project, visit                **
 **                <https://github.com/petervaro/formbuilder>.                 **
@@ -27,71 +27,19 @@
 **                                                                            **
 ************************************************************************ INFO */
 
-/* Globals */
-var g = g || {};
-
 /*----------------------------------------------------------------------------*/
-function main()
+/* Example:
+    // do something
+    debug(new Error());
+    // do another thing
+    debug(new Error()); */
+function debug(error)
 {
     'use strict';
-
-    /* Application */
-    var fb = new g.formbuilder.FormBuilder({
-        classPrefix : 'fb',
-        languages   : {hu : 'Magyar',
-                       en : 'English'},
-    });
-
-    /* Specify section-block */
-    fb.registerBlockPrototype({
-        object    : g.blocks.SingleTextInputBlock,
-        details   : {
-            blockName   : 'Section Block',
-            inputLabel  : 'Label:',
-            inputText   : 'Title of this section...',
-        }}, 'section');
-
-
-    /* Specify label-block */
-    fb.registerBlockPrototype({
-        object    : g.blocks.SingleTextInputBlockWithHelp,
-        details   : {
-            blockName   : 'Question Block',
-            inputLabel  : 'Question:',
-            inputText   : 'A question goes here...',
-            helpText    : 'Add hints to the question...',
-        }}, 'question');
-
-
-    /* Render application */
-    fb.render();
-
-    // HACK: for testing purposes only
-    g.fb = fb;
-
-
-    // >>> TODO:
-    //  1) Create all kinds of units
-    //  2) Create all types of blocks (with remove buttons)
-    //  3) Make CSS work
-    //  4) Add blocks
-    //  5) Remove blocks
-    //  6) Serialise
-    //  7) Deserialise
-    //  8) Create the python-form-builder
-    //  9) Create the database
-    // 10) Create the authentication
-    // 11) Document database => connect to admin
-
-
-
-    /* Create block-instances */
-    // fb.newBlockInstance('section');
-    // fb.newBlockInstance('question');
-    // fb.newBlockInstance('question');
-
-    /* Serialise what we have so far */
-    // console.log(JSON.stringify(fb.serialise()));
-    // fb.saveData();
-    // console.log(fb.loadForm());
+    if (error instanceof Error)
+        console.log('[DEBUG] file: ' + error.fileName.toString() +
+                    ' in line: ' + error.lineNumber.toString() +
+                    ' in column: ' + error.columnNumber.toString());
+    else
+        console.log(error);
 }

@@ -3,23 +3,28 @@
     <head>
         <meta charset="utf-8">
         <title>Form Builder</title>
-        <!-- main.js has to be first -->
+        <!-- CSS -->
+        <link rel="stylesheet"
+              href="{{ url_for('static', filename='css/reset.css') }}">
+        <link rel="stylesheet"
+              href="{{ url_for('static', filename='css/formbuilder.css') }}">
+
+        <!-- DEBUG -->
+        <script type="text/javascript"
+                src="{{ url_for('static', filename='js/utils.js') }}"></script>
+        <!-- DEBUG -->
+
+        <!-- JavaScript -->
         <script type="text/javascript"
                 src="{{ url_for('static', filename='js/main.js') }}"></script>
-        <!-- units.js has to be placed before blocks.js -->
         <script type="text/javascript"
                 src="{{ url_for('static', filename='js/units.js') }}"></script>
         <script type="text/javascript"
-                src="static/js/blocks.js"></script>
-        <!-- formbuilder.js has to be the last one -->
+                src="{{ url_for('static', filename='js/blocks.js') }}"></script>
         <script type="text/javascript"
                 src="{{ url_for('static', filename='js/formbuilder.js') }}"></script>
     </head>
     <body>
-        <div id="menu">
-        </div>
-        <div id="blocks">
-        </div>
         <script type="text/javascript">
             main();
         </script>

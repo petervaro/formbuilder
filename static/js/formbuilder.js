@@ -4,7 +4,7 @@
 **                                ===========                                 **
 **                                                                            **
 **                      Online Form Building Application                      **
-**                       Version: 0.3.01.315 (20150113)                       **
+**                       Version: 0.3.01.394 (20150118)                       **
 **                       File: static/js/formbuilder.js                       **
 **                                                                            **
 **               For more information about the project, visit                **
@@ -30,31 +30,9 @@
 (function(){
 'use strict';
 
-// function requestData(url)
-// {
-//     var request = new XMLHttpRequest();
-//     request.open('GET', '/data', true);
-
-//     request.onload = function()
-//     {
-//         /* If successful */
-//         if (this.status >= 200 && this.status < 400)
-//         {
-//             this.deserialise(JSON.parse(this.response));
-//         }
-//         else
-//         {
-//             // pass
-//         }
-//     };
-
-//     request.onerror = function()
-//     {
-//         // There was a connection error of some sort
-//     };
-
-//     request.send();
-// }
+/* Include order check */
+if (!g.blocks)
+    throw "'formbuilder.js' has to be placed after 'blocks.js'";
 
 /* Public objects (in 'formbuilder' name-space) */
 var formbuilder = {
@@ -62,7 +40,7 @@ var formbuilder = {
 /*----------------------------------------------------------------------------*/
 /* FormBuilder is the manager object. It stores all the information of the
    application itself, it reads and writes the form-serialisation. */
-FormBuilder: function(args)
+FormBuilder: function (args)
 {
     /* Automatic identifiers for prototypes of block-objects */
     this._protoId = 0;
@@ -73,84 +51,87 @@ FormBuilder: function(args)
     /* Instanced block-objects */
     this._blocks = [];
 
-    /* DOM parents */
-    var element = args.menu;
-    if (!(element instanceof HTMLElement))
-        throw "FormBuilder()  =>  Missing 'menu' DOM-object";
-    this._controlParent = element;
+    /* Temporary storage */
+    var variable,
+        body = document.body;
 
-    element = args.blocks;
-    if (!(element instanceof HTMLElement))
-        throw "FormBuilder()  => Missing 'blocks' DOM-object";
-    this._blocksParent = element;
+    if (!body)
+        throw "'document' is missing 'body' object";
+
+    /* CSS name-space */
+    variable = args.classPrefix;
+    this._classPrefix = (typeof variable === 'string' ||
+                         variable instanceof String) ? variable : '';
+
+    /* DOM parent for menu items */
+    variable = body.appendChild(document.createElement('div'));
+    variable.id = this._classPrefix + '-menu';
+    this._menuParent = variable;
+
+    /* DOM parent for block items */
+    variable = body.appendChild(document.createElement('div'));
+    variable.id = this._classPrefix + '-blocks';
+    this._blocksParent = variable;
+
+    /* Set languages */
+    variable = args.languages;
+    this._languages = variable instanceof Object ? variable : {en: 'English'};
+    this._lang = Object.keys(this._languages)[0];
+
 
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.render = function()
-    {
-        var element = document.createElement('div');
-        element.className = this._classPrefix
-
-
-
-        this._controlParent.appendChild();
-    };
-
-    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.registerBlockPrototype = function(prototype, reference)
+    this.registerBlockPrototype = function (prototype, reference)
     {
         /* Get or set reference, store prototype and return it*/
         reference = reference || this._protoId++;
         prototype = prototype || {};
-        prototype.classPrefix = prototype.classPrefix ||
-                                this._classPrefix + '-content';
+
+        var details = prototype.details = prototype.details || {};
+
+
+        /* Leave or set CSS class-prefix */
+        details.classPrefix = details.classPrefix ||
+                              this._classPrefix +
+                              (this._classPrefix ? + '-' + '' : 'content');
+        /* Store new prototype and return reference */
         this._protos[reference] = prototype;
         return reference;
     };
 
 
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.newBlockInstance = function(reference)
+    this.newBlockInstance = function (reference)
     {
-        /* Get prototype and details */
-        try
-        {
-            /* Get object-prototype and details and create a new instance */
-            var prototype = this._protos[reference];
-            var block = new prototype.object(prototype.details);
+        /* Get object-prototype and details and create a new instance */
+        var prototype = this._protos[reference];
+        var block = new prototype.object(prototype.details);
 
-            /* Provide new identifier to the new block-object and store it */
-            block.setId(this._id++);
-            block.setType(reference);
-            this._blocks.push(block);
+        /* Provide new identifier to the new block-object and store it */
+        block.setId(this._id++);
+        block.setType(reference);
+        this._blocks.push(block);
 
-            /* Render HTML */
-            block.render(this._blocksParent);
-        }
-        catch (exception)
-        {
-            console.log('FormBuilder.newBlockInstance()  =>  ' +
-                        'Invalid reference to prototype or ' +
-                        'insufficient prototype options', exception);
-        }
+        /* Render HTML */
+        block.render(this._blocksParent);
     };
 
 
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.pullBlock = function()
+    this.pullBlock = function ()
     {
         // pass
     };
 
 
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.deserialise = function(data)
+    this.deserialise = function (data)
     {
         console.log(data);
     };
 
 
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.serialise = function()
+    this.serialise = function ()
     {
         var blocks = this._blocks,
             data   = {title  : this._title,
@@ -170,7 +151,7 @@ FormBuilder: function(args)
 
 
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.saveForm = function()
+    this.saveForm = function ()
     {
         var request = new XMLHttpRequest();
         request.open('POST', '/data', true);
@@ -179,16 +160,17 @@ FormBuilder: function(args)
                                  'charset=UTF-8');
         console.log(JSON.stringify(this.serialise()));
         request.send(JSON.stringify(this.serialise()));
-    }
+    };
 
 
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.loadForm = function(formId)
+    this.loadForm = function (formId)
     {
         var request = new XMLHttpRequest();
         request.open('GET', '/data?form=' + formId, true);
 
-        request.onload = function()
+        request.addEventListener('load',
+        function ()
         {
             /* If successful */
             if (this.status >= 200 && this.status < 400)
@@ -199,24 +181,26 @@ FormBuilder: function(args)
             {
                 // pass
             }
-        };
+        });
 
-        request.onerror = function()
+        request.addEventListener('error',
+        function ()
         {
             // There was a connection error of some sort
-        };
+        });
 
         request.send();
-    }
+    };
 
 
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.loadList = function()
+    this.loadList = function ()
     {
         var request = new XMLHttpRequest();
         request.open('GET', '/data', true);
 
-        request.onload = function()
+        request.addEventListener('load',
+        function ()
         {
             /* If successful */
             if (this.status >= 200 && this.status < 400)
@@ -227,15 +211,154 @@ FormBuilder: function(args)
             {
                 // pass
             }
-        };
+        });
 
-        request.onerror = function()
+        request.addEventListener('error',
+        function ()
         {
             // There was a connection error of some sort
-        };
+        });
 
         request.send();
-    }
+    };
+
+
+    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    this.render = function ()
+    {
+        var i,
+            key,
+            div,
+            form,
+            input,
+            select,
+            option,
+            object,
+            objectKeys,
+            subClassPrefix,
+            menu = this._menuParent,
+            classPrefix = this._classPrefix;
+
+        /* Create menu */
+        menu.id = classPrefix = classPrefix + (classPrefix ? '-' : '') + 'menu';
+
+        /* -----------------
+           Create menu-items */
+        var items = document.createElement('div');
+        items.className = classPrefix = classPrefix + '-items';
+
+        /* ----------------------
+           Create menu-items-info */
+        form = document.createElement('form');
+        form.className = subClassPrefix = classPrefix + '-info';
+        items.appendChild(form);
+
+        /* ----------------------------
+           Create menu-items-info-title */
+        div = document.createElement('div');
+        div.className = subClassPrefix + '-title';
+        div.appendChild(document.createTextNode('form title:'));
+
+        /* Construct input field */
+        input = document.createElement('input');
+        input.type = 'text';
+
+        /* Set event for user changing value and set default value */
+        input.addEventListener('change',
+        (function (input)
+        {
+            this._title = input.value;
+        }).bind(this, input));
+        this._title = input.value = 'untitled';
+
+        /* Add newly created elements to structure */
+        div.appendChild(input);
+        form.appendChild(div);
+
+        /* -------------------------------
+           Create menu-items-info-language */
+        div = document.createElement('div');
+        div.className = subClassPrefix = subClassPrefix + '-language';
+        div.appendChild(document.createTextNode('form langauge:'));
+
+        /* ----------------------------------------
+           Create menu-items-info-languages-options */
+        select = document.createElement('select');
+        select.className = subClassPrefix + '-options';
+
+        /* Set event for user changing value and set default value */
+        select.addEventListener('change',
+        (function (select)
+        {
+            this._lang = select.value;
+        }).bind(this, select));
+        this._lang = select.value;
+
+        /* Construct options in selection */
+        object = this._languages;
+        objectKeys = Object.keys(object);
+        for (i=0; i<objectKeys.length; i++)
+        {
+            key = objectKeys[i];
+            option = document.createElement('option');
+            option.value = key;
+            option.innerHTML = object[key];
+            select.appendChild(option);
+        }
+
+        /* Add newly created elements to structure */
+        div.appendChild(select);
+        form.appendChild(div);
+
+        /* ---------------------
+           Create menu-items-add */
+        div = document.createElement('div');
+        div.className = subClassPrefix = classPrefix + '-add';
+        div.appendChild(document.createTextNode('add new'));
+
+        /* -----------------------------
+           Create menu-items-add-options */
+        select = document.createElement('select');
+        select.className = subClassPrefix + '-options';
+
+        /* If clicking on the selection */
+        select.addEventListener('click',
+        function (event)
+        {
+            event.stopPropagation();
+        });
+
+        /* Construct options in selection */
+        object = this._protos;
+        objectKeys = Object.keys(object);
+        for (i=0; i<objectKeys.length; i++)
+        {
+            key = objectKeys[i];
+            option = document.createElement('option');
+            option.value = key;
+            option.innerHTML = object[key].details.blockName;
+            select.appendChild(option);
+        }
+
+        /* If clicking on the div itself */
+        div.addEventListener('click',
+        (function (select)
+        {
+            this.newBlockInstance(select.value);
+        }).bind(this, select));
+
+        /* Add newly created elements to structure */
+        div.appendChild(select);
+        div.appendChild(document.createTextNode('block'));
+        items.appendChild(div);
+
+        /* -----------------------------------------
+           Remove children from menu if there is any */
+        while (menu.firstChild)
+            menu.removeChild(menu.firstChild);
+        /* Add the new menu to DOM */
+        menu.appendChild(items);
+    };
 },
 
 }; /* End of 'formbuilder' name-space */
