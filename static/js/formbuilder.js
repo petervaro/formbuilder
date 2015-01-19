@@ -4,7 +4,7 @@
 **                                ===========                                 **
 **                                                                            **
 **                      Online Form Building Application                      **
-**                       Version: 0.3.01.394 (20150118)                       **
+**                       Version: 0.3.01.427 (20150119)                       **
 **                       File: static/js/formbuilder.js                       **
 **                                                                            **
 **               For more information about the project, visit                **
@@ -63,20 +63,38 @@ FormBuilder: function (args)
     this._classPrefix = (typeof variable === 'string' ||
                          variable instanceof String) ? variable : '';
 
+    var classPrefix = this._classPrefix + (this._classPrefix ? '-' : '');
+
     /* DOM parent for menu items */
     variable = body.appendChild(document.createElement('div'));
-    variable.id = this._classPrefix + '-menu';
+    variable.id = classPrefix + 'menu';
     this._menuParent = variable;
 
     /* DOM parent for block items */
     variable = body.appendChild(document.createElement('div'));
-    variable.id = this._classPrefix + '-blocks';
+    variable.id = classPrefix + 'blocks';
     this._blocksParent = variable;
 
     /* Set languages */
     variable = args.languages;
     this._languages = variable instanceof Object ? variable : {en: 'English'};
     this._lang = Object.keys(this._languages)[0];
+
+
+    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    this.setLang = function (lang)
+    {
+        this._lang = lang;
+        this._langInput.value = lang;
+    };
+
+
+    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    this.setTitle = function (title)
+    {
+        this._title = title;
+        this._titleInput.value = title;
+    };
 
 
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
@@ -88,11 +106,11 @@ FormBuilder: function (args)
 
         var details = prototype.details = prototype.details || {};
 
-
         /* Leave or set CSS class-prefix */
         details.classPrefix = details.classPrefix ||
                               this._classPrefix +
-                              (this._classPrefix ? + '-' + '' : 'content');
+                              (this._classPrefix ? '-' : '') + 'blocks';
+
         /* Store new prototype and return reference */
         this._protos[reference] = prototype;
         return reference;
@@ -113,6 +131,9 @@ FormBuilder: function (args)
 
         /* Render HTML */
         block.render(this._blocksParent);
+
+        /* Return new block object */
+        return block;
     };
 
 
@@ -126,27 +147,48 @@ FormBuilder: function (args)
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
     this.deserialise = function (data)
     {
-        console.log(data);
+        /* Remove existing data */
+        var blocksParent = this._blocksParent;
+        while (blocksParent.firstChild)
+            blocksParent.removeChild(blocksParent.firstChild);
+
+        /* Reset storage and counter */
+        this._blocks = [];
+        this._blockId = 0;
+
+        /* Set basic informations */
+        this.setLang(data.lang);
+        this.setTitle(data.title);
+
+        /* Rebuild form from serialised data */
+        var block,
+            blockData,
+            blocks = data.blocks;
+        for (var i=0; i<blocks.length; i++)
+        {
+            /* Create new block */
+            blockData = blocks[i];
+            block = this.newBlockInstance(blockData.type);
+            /* Pass serialised data to block */
+            block.deserialise(blockData);
+        }
     };
 
 
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
     this.serialise = function ()
     {
-        var blocks = this._blocks,
-            data   = {title  : this._title,
-                      lang   : this._lang,
-                      blocks : []};
+        var dataBlocks = [],
+            thisBlocks = this._blocks;
 
         /* Collect all data from blocks */
-        var data_blocks = data.blocks;
-        for (var i=0; i<blocks.length; i++)
-        {
-            data_blocks.push(blocks[i].serialise());
-        }
+        for (var i=0; i<thisBlocks.length; i++)
+            dataBlocks.push(thisBlocks[i].serialise());
 
         /* Return the serialisation */
-        return data;
+        return {title  : this._title,
+                lang   : this._lang,
+                blocks : dataBlocks};
     };
 
 
@@ -169,13 +211,17 @@ FormBuilder: function (args)
         var request = new XMLHttpRequest();
         request.open('GET', '/data?form=' + formId, true);
 
+        /* HACK: try to solve this `self` thingy, with the proper .bind()-ing.
+                 the problem is, if we bind `this`, then there is no way, to
+                 use `this` as a reference to the callback function itself */
+        var self = this;
         request.addEventListener('load',
         function ()
         {
             /* If successful */
             if (this.status >= 200 && this.status < 400)
             {
-                this.deserialise(JSON.parse(this.response));
+                self.deserialise(JSON.parse(this.response));
             }
             else
             {
@@ -260,7 +306,7 @@ FormBuilder: function (args)
         div.appendChild(document.createTextNode('form title:'));
 
         /* Construct input field */
-        input = document.createElement('input');
+        input = this._titleInput = document.createElement('input');
         input.type = 'text';
 
         /* Set event for user changing value and set default value */
@@ -283,16 +329,15 @@ FormBuilder: function (args)
 
         /* ----------------------------------------
            Create menu-items-info-languages-options */
-        select = document.createElement('select');
+        select = this._langInput = document.createElement('select');
         select.className = subClassPrefix + '-options';
 
-        /* Set event for user changing value and set default value */
+        /* Set event for user changing value */
         select.addEventListener('change',
         (function (select)
         {
             this._lang = select.value;
         }).bind(this, select));
-        this._lang = select.value;
 
         /* Construct options in selection */
         object = this._languages;
@@ -305,6 +350,9 @@ FormBuilder: function (args)
             option.innerHTML = object[key];
             select.appendChild(option);
         }
+
+        /* Set default value */
+        this._lang = select.value;
 
         /* Add newly created elements to structure */
         div.appendChild(select);

@@ -4,7 +4,7 @@
 **                                ===========                                 **
 **                                                                            **
 **                      Online Form Building Application                      **
-**                       Version: 0.3.01.398 (20150118)                       **
+**                       Version: 0.3.01.401 (20150118)                       **
 **                          File: static/js/main.js                           **
 **                                                                            **
 **               For more information about the project, visit                **
@@ -76,12 +76,13 @@ function main()
     //  3) Make CSS work
     //  4) Add blocks
     //  5) Remove blocks
-    //  6) Serialise
-    //  7) Deserialise
-    //  8) Create the python-form-builder
-    //  9) Create the database
-    // 10) Create the authentication
-    // 11) Document database => connect to admin
+    //  6) Save and Load buttons for menu
+    //  7) Serialise
+    //  8) Deserialise
+    //  9) Create the python-form-builder
+    // 10) Create the database
+    // 11) Create the authentication
+    // 12) Document database => connect to admin
 
 
 

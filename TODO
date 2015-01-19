@@ -4,7 +4,7 @@
 ##                                ===========                                 ##
 ##                                                                            ##
 ##                      Online Form Building Application                      ##
-##                       Version: 0.3.01.400 (20150118)                       ##
+##                       Version: 0.3.01.430 (20150119)                       ##
 ##                                 File: TODO                                 ##
 ##                                                                            ##
 ##               For more information about the project, visit                ##
@@ -31,56 +31,56 @@
 TODO:
   #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
   # 1
+  - file: build.py
+    line: 44
+    note: |
+          add `>>>` as `MARKER` => `this is where I left`
+
+  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
+  # 2
   - file: formbuilder.py
     line: 46
     note: |
           authenticate user to get access to builder
 
   #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
-  # 2
+  # 3
   - file: configurator_gui/blocks.py
     line: 37
     note: |
           remove NumVar as it is not in use anymore.. probably? ;)
 
   #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
-  # 3
+  # 4
   - file: configurator_gui/main.py
     line: 134
     note: |
           <kill menu, title and language here>
 
   #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
-  # 4
+  # 5
   - file: configurator_gui/utils.py
     line: 153
     note: |
           decorate with operators
 
   #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
-  # 5
+  # 6
   - file: static/js/generator.js
     line: 74
     note: |
           This is the same as _singlelineBlock() 
 
   #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
-  # 6
+  # 7
   - file: static/js/generator.js
     line: 138
     note: |
           This is the same as _checkboxBlock() 
 
-  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
-  # 7
-  - file: build.py
-    line: 44
-    note: |
-          add `>>>` as `MARKER` => `this is where I left`
 
 
-
-#----------------------------- 1 POSTS IN 1 FILES -----------------------------#
+#----------------------------- 4 POSTS IN 3 FILES -----------------------------#
 HACK:
   #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
   # 1
@@ -88,6 +88,29 @@ HACK:
     line: 69
     note: |
           for testing purposes only
+
+  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
+  # 2
+  - file: filemanager.py
+    line: 61
+    note: |
+          only for testing purposes
+
+  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
+  # 3
+  - file: filemanager.py
+    line: 74
+    note: |
+          only for testing purposes
+
+  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
+  # 4
+  - file: static/js/formbuilder.js
+    line: 214
+    note: |
+          try to solve this `self` thingy, with the proper .bind()-ing.
+          the problem is, if we bind `this`, then there is no way, to
+          use `this` as a reference to the callback function itself 
 
 
 

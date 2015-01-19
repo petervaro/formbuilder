@@ -4,7 +4,7 @@
 **                                ===========                                 **
 **                                                                            **
 **                      Online Form Building Application                      **
-**                       Version: 0.3.01.315 (20150113)                       **
+**                       Version: 0.3.01.427 (20150119)                       **
 **                          File: static/js/units.js                          **
 **                                                                            **
 **               For more information about the project, visit                **
@@ -27,7 +27,7 @@
 **                                                                            **
 ************************************************************************ INFO */
 
-(function(){
+(function (){
 'use strict';
 
 /*----------------------------------------------------------------------------*/
@@ -35,21 +35,21 @@
 function Unit(args)
 {
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.render = function()
+    this.render = function ()
     {
         // pass
     };
 
 
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.serialise = function()
+    this.serialise = function ()
     {
         // pass
     };
 
 
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.deserialise = function()
+    this.deserialise = function ()
     {
         // pass
     };
@@ -60,7 +60,7 @@ function Unit(args)
 /* Public objects (in 'units' name-space) */
 var units = {
 /*----------------------------------------------------------------------------*/
-StaticTextUnit: function(args)
+StaticTextUnit: function (args)
 {
     /* Initialisation */
     args = args || {};
@@ -73,7 +73,7 @@ StaticTextUnit: function(args)
 
 
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.render = function(parent)
+    this.render = function (parent)
     {
         /* Add input */
         var element = document.createElement('p');
@@ -86,7 +86,7 @@ StaticTextUnit: function(args)
 
 
 /*----------------------------------------------------------------------------*/
-SingleLineTextInputUnit: function(args)
+SingleLineTextInputUnit: function (args)
 {
     /* Initialisation */
     args = args || {};
@@ -100,7 +100,7 @@ SingleLineTextInputUnit: function(args)
 
 
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.render = function(parent)
+    this.render = function (parent)
     {
         /* Add input */
         var element = this._userValue = document.createElement('input');
@@ -112,16 +112,24 @@ SingleLineTextInputUnit: function(args)
 
 
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.serialise = function()
+    this.serialise = function ()
     {
         return [{type  : this._type,
                  label : this._userValue.value}];
     };
+
+
+    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    this.deserialise = function (data)
+    {
+        this._userValue.value = data[0].label;
+    };
 },
 
 
+
 /*----------------------------------------------------------------------------*/
-MultiLineTextInputUnit: function(args)
+MultiLineTextInputUnit: function (args)
 {
     /* Initialisation */
     args = args || {};
@@ -135,7 +143,7 @@ MultiLineTextInputUnit: function(args)
 
 
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.render = function(parent)
+    this.render = function (parent)
     {
         /* Add textarea */
         var element = this._userValue = document.createElement('textarea');
@@ -146,12 +154,30 @@ MultiLineTextInputUnit: function(args)
 
 
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.serialise = function()
+    this.serialise = function ()
     {
         return [{type  : this._type,
                  label : this._userValue.value}];
     };
-}
+
+
+    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    this.deserialise = function (data)
+    {
+        this._userValue.value = data[0].label;
+    };
+},
+
+
+
+/*----------------------------------------------------------------------------*/
+__Unit: function (args)
+{
+    /* Initialisation */
+    args = args || {};
+    Unit.call(this, args);
+    this._type = '__';
+},
 
 }; /* End of 'units' name-space */
 /* Make 'units' accessible from globals */

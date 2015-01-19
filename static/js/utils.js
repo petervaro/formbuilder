@@ -4,7 +4,7 @@
 **                                ===========                                 **
 **                                                                            **
 **                      Online Form Building Application                      **
-**                       Version: 0.3.01.391 (20150118)                       **
+**                       Version: 0.3.01.415 (20150119)                       **
 **                          File: static/js/utils.js                          **
 **                                                                            **
 **               For more information about the project, visit                **
@@ -32,14 +32,19 @@
     // do something
     debug(new Error());
     // do another thing
-    debug(new Error()); */
-function debug(error)
+    debug(new Error(), 16); */
+function debug()
 {
     'use strict';
-    if (error instanceof Error)
-        console.log('[DEBUG] file: ' + error.fileName.toString() +
-                    ' in line: ' + error.lineNumber.toString() +
-                    ' in column: ' + error.columnNumber.toString());
+    var args  = Array.prototype.slice.call(arguments),
+        first = args[0],
+        rest  = args.slice(1);
+
+    if (first instanceof Error)
+        console.log('[DEBUG] file: ' + first.fileName     +
+                    ' in line: '     + first.lineNumber   +
+                    ' in column: '   + first.columnNumber +
+                    (rest ? '\n        value: ' + rest.join(' ') : ''));
     else
-        console.log(error);
+        console.log(args.join(' '));
 }

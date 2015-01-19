@@ -4,7 +4,7 @@
 **                                ===========                                 **
 **                                                                            **
 **                      Online Form Building Application                      **
-**                       Version: 0.3.01.322 (20150118)                       **
+**                       Version: 0.3.01.427 (20150119)                       **
 **                         File: static/js/blocks.js                          **
 **                                                                            **
 **               For more information about the project, visit                **
@@ -27,7 +27,7 @@
 **                                                                            **
 ************************************************************************ INFO */
 
-(function(){
+(function () {
 'use strict';
 
 /* Include order check */
@@ -55,27 +55,42 @@ function FormBlockObject(args)
 
 
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.setType = function(blockType)
+    this.setType = function (blockType)
     {
         this._type = blockType;
     };
 
 
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.serialise = function()
+    this.serialise = function ()
     {
-        var output = [],
-            units = this._units;
+        var dataUnits = [],
+            thisUnits  = this._units;
 
-        for (var i=0; i<units.length; i++)
-            output.push(units[i].serialise());
+        /* Collect all data from units */
+        for (var i=0; i<thisUnits.length; i++)
+            dataUnits.push(thisUnits[i].serialise());
 
-        return output;
+        /* Return the serialisation */
+        return {type  : this._type,
+                units : dataUnits};
     };
 
 
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.render = function(parent)
+    this.deserialise = function (data)
+    {
+        var thisUnits = this._units,
+            dataUnits = data.units;
+
+        /* Pass serialised data back to the units */
+        for (var i=0; i<dataUnits.length; i++)
+            thisUnits[i].deserialise(dataUnits[i]);
+    };
+
+
+    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    this.render = function (parent)
     {
         /* Create container for block */
         var element = this._element = document.createElement('div');
@@ -100,7 +115,7 @@ var blocks = {
     - inputLabel
     - inputText
     - classPrefix */
-SingleTextInputBlock: function(args)
+SingleTextInputBlock: function (args)
 {
     /* Initialisation */
     args = args || {};
@@ -113,28 +128,6 @@ SingleTextInputBlock: function(args)
         new g.units.SingleLineTextInputUnit({defaultText: args.inputText,
                                              classPrefix: this._classPrefix}),
     ];
-
-
-    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.serialise = function()
-    {
-        var units = this._units,
-            data  = {type   : this._type,
-                     inputs : []};
-
-        /* Collect all data from units */
-        var serial,
-            data_inputs = data.inputs;
-        for (var i=0; i<units.length; i++)
-        {
-            serial = units[i].serialise();
-            if (serial)
-                data_inputs.push(serial);
-        }
-
-        /* Return the serialisation */
-        return data;
-    };
 },
 
 
@@ -145,7 +138,7 @@ SingleTextInputBlock: function(args)
     - inputLabel
     - inputText
     - classPrefix */
-SingleTextInputBlockWithHelp: function(args)
+SingleTextInputBlockWithHelp: function (args)
 {
     /* Initialisation */
     args = args || {};

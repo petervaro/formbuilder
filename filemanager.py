@@ -4,7 +4,7 @@
 ##                                ===========                                 ##
 ##                                                                            ##
 ##                      Online Form Building Application                      ##
-##                       Version: 0.3.01.318 (20150113)                       ##
+##                       Version: 0.3.01.423 (20150119)                       ##
 ##                            File: filemanager.py                            ##
 ##                                                                            ##
 ##               For more information about the project, visit                ##
@@ -27,9 +27,10 @@
 ##                                                                            ##
 ######################################################################## INFO ##
 
-# IMport python modules
+# Import python modules
 from os import makedirs
 from os.path import join
+from pprint import pprint
 from itertools import count
 from string import ascii_letters, digits
 from pickle import dump, load, HIGHEST_PROTOCOL
@@ -57,10 +58,11 @@ class FileManager:
 
     #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
     def load(self, path):
-        return ''
-        #
+        # HACK: only for testing purposes
+        path = join(_PATH, '1')
+
         try:
-            data = self._data['']
+            data = self._data[path]
         except KeyError:
             with open(path, 'rb') as file:
                 data = load(file)
@@ -69,13 +71,18 @@ class FileManager:
 
     #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
     def dump(self, data):
-        return ''
-        path = join(_PATH, _format_file_name(data['title'], data['lang']))
+        # HACK: only for testing purposes
+        path = join(_PATH, '1')
+
         for i in range(2):
             try:
+                # Save in binary format
                 with open(path, 'wb') as file:
-                    self._data[''] = data
+                    self._data[path] = data
                     dump(data, file, protocol=HIGHEST_PROTOCOL)
+                # Save in plain text format
+                with open(path + '.py', 'w') as file:
+                    pprint(data, stream=file)
                     break
             # If path does not exist
             except FileNotFoundError as e:
