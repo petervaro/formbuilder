@@ -4,7 +4,7 @@
 **                                ===========                                 **
 **                                                                            **
 **                      Online Form Building Application                      **
-**                       Version: 0.3.01.427 (20150119)                       **
+**                       Version: 0.3.01.453 (20150119)                       **
 **                       File: static/js/formbuilder.js                       **
 **                                                                            **
 **               For more information about the project, visit                **
@@ -147,18 +147,9 @@ FormBuilder: function (args)
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
     this.deserialise = function (data)
     {
-        /* Remove existing data */
-        var blocksParent = this._blocksParent;
-        while (blocksParent.firstChild)
-            blocksParent.removeChild(blocksParent.firstChild);
-
-        /* Reset storage and counter */
-        this._blocks = [];
-        this._blockId = 0;
-
-        /* Set basic informations */
-        this.setLang(data.lang);
-        this.setTitle(data.title);
+        /* Re/set basic informations */
+        this.resetForm(data.lang, data.title, data.formId);
+        console.log('[DESERIALISE] formId = ', data.formId);
 
         /* Rebuild form from serialised data */
         var block,
@@ -185,9 +176,12 @@ FormBuilder: function (args)
         for (var i=0; i<thisBlocks.length; i++)
             dataBlocks.push(thisBlocks[i].serialise());
 
+        console.log('[ SERIALISE ] formId = ', this._formId || null);
+
         /* Return the serialisation */
         return {title  : this._title,
                 lang   : this._lang,
+                formId : this._formId || null,
                 blocks : dataBlocks};
     };
 
@@ -200,8 +194,44 @@ FormBuilder: function (args)
         request.setRequestHeader('Content-Type',
                                  'application/x-www-form-urlencoded;'+
                                  'charset=UTF-8');
-        console.log(JSON.stringify(this.serialise()));
         request.send(JSON.stringify(this.serialise()));
+    };
+
+
+    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    this.closeForm = function (formId)
+    {
+        var request = new XMLHttpRequest();
+
+        // >>> SOMETHING IS NOT WORKING HERE :(:(:(
+
+        request.open('POST', '/data?form=' + (formId || this._formId), true);
+        request.setRequestHeader('Content-Type',
+                                 'application/x-www-form-urlencoded;'+
+                                 'charset=UTF-8');
+        request.send();
+    };
+
+
+    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    this.resetForm = function (lang, title, id)
+    {
+        /* Request release of current form */
+        this.closeForm();
+
+        /* Remove existing data */
+        var blocksParent = this._blocksParent;
+        while (blocksParent.firstChild)
+            blocksParent.removeChild(blocksParent.firstChild);
+
+        /* Reset storage and counter */
+        this._blocks = [];
+        this._blockId = 0;
+
+        /* Reset form-id, langauge and title */
+        this._formId = id || undefined;
+        this.setLang(lang || Object.keys(this._languages)[0]);
+        this.setTitle(title || 'untitled');
     };
 
 
@@ -211,28 +241,35 @@ FormBuilder: function (args)
         var request = new XMLHttpRequest();
         request.open('GET', '/data?form=' + formId, true);
 
-        /* HACK: try to solve this `self` thingy, with the proper .bind()-ing.
-                 the problem is, if we bind `this`, then there is no way, to
-                 use `this` as a reference to the callback function itself */
-        var self = this;
+        /* If the response has been loaded */
         request.addEventListener('load',
-        function ()
+        (function ()
         {
             /* If successful */
-            if (this.status >= 200 && this.status < 400)
+            if (request.status >= 200 && request.status < 400)
             {
-                self.deserialise(JSON.parse(this.response));
+                var response = JSON.parse(request.response);
+                /* If form is already open */
+                if ('status' in response)
+                {
+                    alert('Ooups! It looks like someone ' +
+                          'is already editing this form');
+                    return;
+                }
+                /* If form is not open */
+                this.deserialise(response);
             }
             else
             {
                 // pass
             }
-        });
+        }).bind(this));
 
+        /* If there was an error during the connection */
         request.addEventListener('error',
         function ()
         {
-            // There was a connection error of some sort
+            // pass
         });
 
         request.send();
@@ -245,24 +282,26 @@ FormBuilder: function (args)
         var request = new XMLHttpRequest();
         request.open('GET', '/data', true);
 
+        /* If the response has been loaded */
         request.addEventListener('load',
-        function ()
+        (function ()
         {
             /* If successful */
-            if (this.status >= 200 && this.status < 400)
+            if (request.status >= 200 && request.status < 400)
             {
-                this.deserialise(JSON.parse(this.response));
+                this.deserialise(JSON.parse(request.response));
             }
             else
             {
                 // pass
             }
-        });
+        }).bind(this));
 
+        /* If there was an error during the connection */
         request.addEventListener('error',
         function ()
         {
-            // There was a connection error of some sort
+            // pass
         });
 
         request.send();

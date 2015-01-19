@@ -4,7 +4,7 @@
 ##                                ===========                                 ##
 ##                                                                            ##
 ##                      Online Form Building Application                      ##
-##                       Version: 0.3.01.423 (20150119)                       ##
+##                       Version: 0.3.01.449 (20150119)                       ##
 ##                            File: filemanager.py                            ##
 ##                                                                            ##
 ##               For more information about the project, visit                ##
@@ -28,22 +28,44 @@
 ######################################################################## INFO ##
 
 # Import python modules
-from os import makedirs
-from os.path import join
+from pathlib import Path
 from pprint import pprint
 from itertools import count
+from os.path import join, isdir
+from os import makedirs, listdir
 from string import ascii_letters, digits
 from pickle import dump, load, HIGHEST_PROTOCOL
+
+# Import formbuilder modules
+from formdict import FormDict
 
 # Module level private constants
 _ASCII = ascii_letters + digits
 _NAME = '{}_{}'
 _PATH = 'forms'
+_BIN_FILE   = 'data.form'
+_PY_FILE    = 'data.py'
+_TITLE_FILE = 'title'
+_TITLE_TEXT = '{title} | {lang}'
+
 
 
 #------------------------------------------------------------------------------#
-def _format_file_name(string, lang):
-    return _NAME.format(''.join(c if c in _ASCII else '_' for c in string), lang)
+def _get_id():
+    # Helper method to filter integers
+    def toi(value):
+        # If value can be interpreted as integer
+        try:
+            return int(value)
+        # If value is not a valid value for int()
+        except ValueError:
+            return 0
+    # If there are folders
+    try:
+        return max(toi(d.name) for d in Path(_PATH).iterdir() if d.is_dir()) + 1
+    # If no form has already been saved
+    except ValueError:
+        return 1
 
 
 
@@ -52,41 +74,58 @@ class FileManager:
 
     #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
     def __init__(self):
-        self._id   = count()
+        self._id   = count(_get_id())
         self._data = {}
 
 
     #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
-    def load(self, path):
-        # HACK: only for testing purposes
-        path = join(_PATH, '1')
+    def load(self, form_id):
+        # Create file-path
+        path = join(_PATH, str(form_id), _BIN_FILE)
 
+        # If file is already open
         try:
-            data = self._data[path]
+            form = self._data[path]
+            if form.is_locked:
+                data = {'status': False}
+            else:
+                data = form.data
+                form.lock()
+
+            print('[LOADING] =>', data, form.is_locked)
+        # If file is not open
         except KeyError:
+            # Open it and load deserialise its content
             with open(path, 'rb') as file:
                 data = load(file)
+                self._data[path] = FormDict(data, lock=True)
+        # Return loaded data
         return data
 
 
     #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
     def dump(self, data):
-        # HACK: only for testing purposes
-        path = join(_PATH, '1')
+        # Get/set form-id
+        form_id = data['formId'] = data['formId'] or next(self._id)
+        # Create folder-path
+        path = join(_PATH, str(form_id))
 
         for i in range(2):
             try:
                 # Save in binary format
-                with open(path, 'wb') as file:
-                    self._data[path] = data
+                with open(join(path, _BIN_FILE), 'wb') as file:
+                    self._data[path] = FormDict(data, lock=True)
                     dump(data, file, protocol=HIGHEST_PROTOCOL)
+                # Save title
+                with open(join(path, _TITLE_FILE), 'w') as file:
+                    file.write(_TITLE_TEXT.format(**data))
                 # Save in plain text format
-                with open(path + '.py', 'w') as file:
+                with open(join(path, _PY_FILE), 'w') as file:
                     pprint(data, stream=file)
                     break
             # If path does not exist
             except FileNotFoundError as e:
-                makedirs(_PATH)
+                makedirs(path)
         else:
             print('An error occured during saving {}'.format(path))
 
@@ -94,3 +133,12 @@ class FileManager:
     #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
     def list(self):
         return ''
+
+
+    #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
+    def release(self, form_id):
+        try:
+            self._data[join(_PATH, str(form_id), _BIN_FILE)].release()
+        except (KeyError, AttributeError):
+            print('[RELEASE] =>', form_id)
+            pass

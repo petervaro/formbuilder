@@ -4,8 +4,8 @@
 ##                                ===========                                 ##
 ##                                                                            ##
 ##                      Online Form Building Application                      ##
-##                       Version: 0.3.01.456 (20150119)                       ##
-##                                 File: TODO                                 ##
+##                       Version: 0.3.01.446 (20150119)                       ##
+##                             File: formdict.py                              ##
 ##                                                                            ##
 ##               For more information about the project, visit                ##
 ##                <https://github.com/petervaro/formbuilder>.                 ##
@@ -27,66 +27,35 @@
 ##                                                                            ##
 ######################################################################## INFO ##
 
-#----------------------------- 7 POSTS IN 6 FILES -----------------------------#
-TODO:
-  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
-  # 1
-  - file: build.py
-    line: 44
-    note: |
-          add `>>>` as `MARKER` => `this is where I left`
+#------------------------------------------------------------------------------#
+class FormDict:
 
-  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
-  # 2
-  - file: configurator_gui/blocks.py
-    line: 37
-    note: |
-          remove NumVar as it is not in use anymore.. probably? ;)
-
-  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
-  # 3
-  - file: configurator_gui/main.py
-    line: 134
-    note: |
-          <kill menu, title and language here>
-
-  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
-  # 4
-  - file: configurator_gui/utils.py
-    line: 153
-    note: |
-          decorate with operators
-
-  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
-  # 5
-  - file: static/js/generator.js
-    line: 74
-    note: |
-          This is the same as _singlelineBlock() 
-
-  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
-  # 6
-  - file: static/js/generator.js
-    line: 138
-    note: |
-          This is the same as _checkboxBlock() 
-
-  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
-  # 7
-  - file: formbuilder.py
-    line: 46
-    note: |
-          authenticate user to get access to builder
+    #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
+    @property
+    def data(self):
+        return self._data
+    @data.setter
+    def data(self, value):
+        self._data = value
 
 
-
-#----------------------------- 1 POSTS IN 1 FILES -----------------------------#
-HACK:
-  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
-  # 1
-  - file: static/js/main.js
-    line: 69
-    note: |
-          for testing purposes only
+    #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
+    @property
+    def is_locked(self):
+        return self._lock
 
 
+    #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
+    def __init__(self, data, lock=False):
+        self._data = data
+        self._lock = lock
+
+
+    #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
+    def release(self):
+        self._lock = False
+
+
+    #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
+    def lock(self):
+        self._lock = True

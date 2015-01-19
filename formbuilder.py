@@ -5,7 +5,7 @@
 ##                                ===========                                 ##
 ##                                                                            ##
 ##                      Online Form Building Application                      ##
-##                       Version: 0.3.01.318 (20150113)                       ##
+##                       Version: 0.3.01.449 (20150119)                       ##
 ##                            File: formbuilder.py                            ##
 ##                                                                            ##
 ##               For more information about the project, visit                ##
@@ -53,7 +53,14 @@ def index():
 def data():
     # If client posted a new form
     if request.method == 'POST':
-        fm.dump(request.get_json(force=True))
+        # If post is about to release a form (closing, beginning a new, etc.)
+        try:
+            fm.release(request.args['form'])
+        # If post is about to send a form
+        except KeyError:
+            fm.dump(request.get_json(force=True))
+
+        # Return OKAY status
         return jsonify(status=True)
 
     # If client requested an actual form
