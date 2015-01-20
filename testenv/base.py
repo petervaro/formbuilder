@@ -4,8 +4,8 @@
 ##                                ===========                                 ##
 ##                                                                            ##
 ##                      Online Form Building Application                      ##
-##                       Version: 0.3.01.459 (20150120)                       ##
-##                                 File: TODO                                 ##
+##                       Version: 0.3.01.457 (20150120)                       ##
+##                           File: testenv/base.py                            ##
 ##                                                                            ##
 ##               For more information about the project, visit                ##
 ##                <https://github.com/petervaro/formbuilder>.                 ##
@@ -27,66 +27,10 @@
 ##                                                                            ##
 ######################################################################## INFO ##
 
-#----------------------------- 7 POSTS IN 6 FILES -----------------------------#
-TODO:
-  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
-  # 1
-  - file: formbuilder.py
-    line: 46
-    note: |
-          authenticate user to get access to builder
+# Import sqlalchemy modules
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
 
-  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
-  # 2
-  - file: build.py
-    line: 45
-    note: |
-          add `>>>` as `MARKER` => `this is where I left`
-
-  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
-  # 3
-  - file: configurator_gui/blocks.py
-    line: 37
-    note: |
-          remove NumVar as it is not in use anymore.. probably? ;)
-
-  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
-  # 4
-  - file: configurator_gui/main.py
-    line: 134
-    note: |
-          <kill menu, title and language here>
-
-  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
-  # 5
-  - file: configurator_gui/utils.py
-    line: 153
-    note: |
-          decorate with operators
-
-  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
-  # 6
-  - file: static/js/generator.js
-    line: 74
-    note: |
-          This is the same as _singlelineBlock() 
-
-  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
-  # 7
-  - file: static/js/generator.js
-    line: 138
-    note: |
-          This is the same as _checkboxBlock() 
-
-
-
-#----------------------------- 1 POSTS IN 1 FILES -----------------------------#
-HACK:
-  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
-  # 1
-  - file: static/js/main.js
-    line: 69
-    note: |
-          for testing purposes only
-
-
+#------------------------------------------------------------------------------#
+engine = create_engine('sqlite:///:memory:', echo=True)
+Base = declarative_base()

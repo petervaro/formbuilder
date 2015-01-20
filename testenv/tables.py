@@ -4,8 +4,8 @@
 ##                                ===========                                 ##
 ##                                                                            ##
 ##                      Online Form Building Application                      ##
-##                       Version: 0.3.01.459 (20150120)                       ##
-##                                 File: TODO                                 ##
+##                       Version: 0.3.01.457 (20150120)                       ##
+##                          File: testenv/tables.py                           ##
 ##                                                                            ##
 ##               For more information about the project, visit                ##
 ##                <https://github.com/petervaro/formbuilder>.                 ##
@@ -27,66 +27,46 @@
 ##                                                                            ##
 ######################################################################## INFO ##
 
-#----------------------------- 7 POSTS IN 6 FILES -----------------------------#
-TODO:
-  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
-  # 1
-  - file: formbuilder.py
-    line: 46
-    note: |
-          authenticate user to get access to builder
+# Import sqlalchemy modules
+from sqlalchemy.orm import relationship, backref
+from sqlalchemy import Column, Integer, String, ForeignKey
 
-  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
-  # 2
-  - file: build.py
-    line: 45
-    note: |
-          add `>>>` as `MARKER` => `this is where I left`
+# Import test-db modules
+from base import Base
 
-  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
-  # 3
-  - file: configurator_gui/blocks.py
-    line: 37
-    note: |
-          remove NumVar as it is not in use anymore.. probably? ;)
-
-  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
-  # 4
-  - file: configurator_gui/main.py
-    line: 134
-    note: |
-          <kill menu, title and language here>
-
-  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
-  # 5
-  - file: configurator_gui/utils.py
-    line: 153
-    note: |
-          decorate with operators
-
-  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
-  # 6
-  - file: static/js/generator.js
-    line: 74
-    note: |
-          This is the same as _singlelineBlock() 
-
-  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
-  # 7
-  - file: static/js/generator.js
-    line: 138
-    note: |
-          This is the same as _checkboxBlock() 
+# Module level private constants
+_USER_REPR = '<User(name={0.name!r}, fullname={0.fullname!r}, password={0.password!r})>'
+_MAIL_REPR = '<Mail(address={0.address!r})>'
 
 
 
-#----------------------------- 1 POSTS IN 1 FILES -----------------------------#
-HACK:
-  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
-  # 1
-  - file: static/js/main.js
-    line: 69
-    note: |
-          for testing purposes only
+#------------------------------------------------------------------------------#
+class User(Base):
+    __tablename__ = 'users'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(50))
+    fullname = Column(String)
+    password = Column(String)
 
 
+    #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
+    def __repr__(self):
+        return _USER_REPR.format(self)
+
+
+
+#------------------------------------------------------------------------------#
+class Mails(Base):
+    __tablename__ = 'mails'
+
+    id = Column(Integer, primary_key=True)
+    address = Column(String, nullable=False)
+    user_id = Column(Integer, ForeignKey('users.id'))
+
+    user = relationship('User', backref=backref('mails', order_by=id))
+
+
+    #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
+    def __repr__(self):
+        return _MAIL_REPR.format(self)
