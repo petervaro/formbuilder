@@ -4,7 +4,7 @@
 **                                ===========                                 **
 **                                                                            **
 **                      Online Form Building Application                      **
-**                       Version: 0.3.01.427 (20150119)                       **
+**                       Version: 0.3.01.464 (20150121)                       **
 **                          File: static/js/units.js                          **
 **                                                                            **
 **               For more information about the project, visit                **
@@ -29,6 +29,9 @@
 
 (function (){
 'use strict';
+
+/*----------------------------------------------------------------------------*/
+function doNothing() {}
 
 /*----------------------------------------------------------------------------*/
 /* Base-class of all unit-objects */
@@ -171,12 +174,36 @@ MultiLineTextInputUnit: function (args)
 
 
 /*----------------------------------------------------------------------------*/
-__Unit: function (args)
+TextButtonUnit: function (args)
 {
     /* Initialisation */
     args = args || {};
     Unit.call(this, args);
-    this._type = '__';
+    this._type = 'TextButtonUnit';
+
+    this._captionText = args.captionText || 'Button';
+    this._classPrefix = args.classPrefix || '';
+    this._eventCallbacks = args.eventCallbacks || [];
+
+    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    this.render = function (parent)
+    {
+        /* Add textarea */
+        var element = this._userValue = document.createElement('div');
+        element.className = this._classPrefix + '-button';
+        element.innerHTML = this._captionText;
+
+        /* Bind event callbacks to button */
+        var event,
+            eventCallbacks = this._eventCallbacks,
+            events = Object.keys(this._eventCallbacks);
+        for (var i=0; i<events.length; i++)
+        {
+            event = events[i];
+            element.addEventListener(event, eventCallbacks[event]);
+        }
+        parent.appendChild(element);
+    };
 },
 
 }; /* End of 'units' name-space */

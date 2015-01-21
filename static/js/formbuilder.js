@@ -4,7 +4,7 @@
 **                                ===========                                 **
 **                                                                            **
 **                      Online Form Building Application                      **
-**                       Version: 0.3.01.453 (20150119)                       **
+**                       Version: 0.3.01.464 (20150121)                       **
 **                       File: static/js/formbuilder.js                       **
 **                                                                            **
 **               For more information about the project, visit                **
@@ -350,7 +350,7 @@ FormBuilder: function (args)
 
         /* Set event for user changing value and set default value */
         input.addEventListener('change',
-        (function (input)
+        (function ()
         {
             this._title = input.value;
         }).bind(this, input));
@@ -373,7 +373,7 @@ FormBuilder: function (args)
 
         /* Set event for user changing value */
         select.addEventListener('change',
-        (function (select)
+        (function ()
         {
             this._lang = select.value;
         }).bind(this, select));
@@ -429,7 +429,7 @@ FormBuilder: function (args)
 
         /* If clicking on the div itself */
         div.addEventListener('click',
-        (function (select)
+        (function ()
         {
             this.newBlockInstance(select.value);
         }).bind(this, select));

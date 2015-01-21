@@ -4,7 +4,7 @@
 **                                ===========                                 **
 **                                                                            **
 **                      Online Form Building Application                      **
-**                       Version: 0.3.01.394 (20150118)                       **
+**                       Version: 0.3.01.460 (20150121)                       **
 **                           File: testenv/test.js                            **
 **                                                                            **
 **               For more information about the project, visit                **
@@ -27,8 +27,40 @@
 **                                                                            **
 ************************************************************************ INFO */
 
-(function () {
-    console.log('before error');
-    throw 'we have an error here';
-    console.log('after error');
+var g = {};
+
+(function ()
+{
+'use strict';
+
+function SuperClass()
+{
+    this.method = function ()
+    {
+        console.log('from superclass');
+    };
+};
+
+var module = {
+    SubClass: function ()
+    {
+        SuperClass.call(this);
+        // var methodOfSuper = this.method;
+        this.method = function ()
+        {
+            console.log('from subclass');
+            // methodOfSuper();  <-- this one works :(
+            this.prototype.method();
+        };
+    },
+}
+
+g.module = module;
+})();
+
+(function ()
+{
+    'use strict';
+    var instance = new g.module.SubClass();
+    instance.method();
 })();

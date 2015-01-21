@@ -4,7 +4,7 @@
 **                                ===========                                 **
 **                                                                            **
 **                      Online Form Building Application                      **
-**                       Version: 0.3.01.401 (20150118)                       **
+**                       Version: 0.3.01.464 (20150121)                       **
 **                          File: static/js/main.js                           **
 **                                                                            **
 **               For more information about the project, visit                **
@@ -62,9 +62,37 @@ function main()
             helpText    : 'Add hints to the question...',
         }}, 'question');
 
+    /* Specify radio-block */
+    fb.registerBlockPrototype({
+        object    : g.blocks.ChoiceBlockWithHelp,
+        details   : {
+            blockName   : 'Radio-button Block',
+            inputLabel  : 'Question:',
+            inputText   : 'A question goes here...',
+            helpText    : 'Add hints to the question...',
+        }}, 'radio');
+
+    /* Specify radio-block */
+    fb.registerBlockPrototype({
+        object    : g.blocks.GroupWithHelp,
+        details   : {
+            blockName   : 'Group Block',
+            inputLabel  : 'Question:',
+            inputText   : 'A question goes here...',
+            helpText    : 'Add hints to the question...',
+        }}, 'group');
+
 
     /* Render application */
     fb.render();
+
+    /* HACK: this is for testing purposes only */
+    fb.newBlockInstance('section');
+    fb.newBlockInstance('question');
+    var b = fb.newBlockInstance('radio');
+    for (var i=0; i<5; i++)
+        b.addVarUnit();
+    // fb.newBlockInstance('group')
 
     // HACK: for testing purposes only
     g.fb = fb;

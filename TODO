@@ -4,7 +4,7 @@
 ##                                ===========                                 ##
 ##                                                                            ##
 ##                      Online Form Building Application                      ##
-##                       Version: 0.3.01.459 (20150120)                       ##
+##                       Version: 0.3.01.480 (20150121)                       ##
 ##                                 File: TODO                                 ##
 ##                                                                            ##
 ##               For more information about the project, visit                ##
@@ -39,7 +39,7 @@ TODO:
   #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
   # 2
   - file: build.py
-    line: 45
+    line: 44
     note: |
           add `>>>` as `MARKER` => `this is where I left`
 
@@ -80,12 +80,19 @@ TODO:
 
 
 
-#----------------------------- 1 POSTS IN 1 FILES -----------------------------#
+#----------------------------- 2 POSTS IN 1 FILES -----------------------------#
 HACK:
   #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
   # 1
   - file: static/js/main.js
-    line: 69
+    line: 89
+    note: |
+          this is for testing purposes only 
+
+  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
+  # 2
+  - file: static/js/main.js
+    line: 97
     note: |
           for testing purposes only
 

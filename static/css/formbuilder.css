@@ -4,7 +4,7 @@
 **                                ===========                                 **
 **                                                                            **
 **                      Online Form Building Application                      **
-**                       Version: 0.3.01.391 (20150118)                       **
+**                       Version: 0.3.01.477 (20150121)                       **
 **                      File: static/css/formbuilder.css                      **
 **                                                                            **
 **               For more information about the project, visit                **
@@ -53,8 +53,8 @@ textarea
 
 .fb-menu-items-add,
 .fb-content-form-block-remove,
-.fb-content-form-block-option-add,
-.fb-content-form-block-option-remove
+.fb-blocks-block-add-button,
+.fb-blocks-block-remove-button
 {
     cursor: pointer;
     -webkit-user-select: none;
@@ -108,14 +108,13 @@ textarea
     border-bottom: 1pt solid #e8e8e8;
 }
 
-.fb-content-form-block
+.fb-blocks-block
 {
     border-top: 1pt solid #e8e8e8;
     position: relative;
-    width: 100%;
 }
 
-.fb-content-form-block-label,
+.fb-blocks-block-caption,
 .fb-content-form-block-remove
 {
     padding: 2pt;
@@ -123,7 +122,7 @@ textarea
     clear: both;
 }
 
-.fb-content-form-block-label
+.fb-blocks-block-caption
 {
     position: absolute;
     top: 0;
@@ -142,20 +141,19 @@ textarea
     text-transform: uppercase;
 }
 
-.fb-content-form-block-body
+.fb-blocks-block
 {
     padding: 10pt;
 }
 
-.fb-content-form-block-field
+.fb-blocks-block-field
 {
     margin: 4pt 0;
     width: 100%;
 }
 
-.fb-content-form-block-option-add,
-.fb-content-form-block-option-remove
-
+.fb-blocks-block-add-button,
+.fb-blocks-block-remove-button
 {
     display: inline-block;
     clear: both;
@@ -164,12 +162,12 @@ textarea
     text-transform: uppercase;
 }
 
-.fb-content-form-block-option-add
+.fb-blocks-block-add-button
 {
     background: #0099FF;
 }
 
-.fb-content-form-block-option-remove
+.fb-blocks-block-remove-button
 {
     background: #CC3300;
 }
@@ -177,9 +175,4 @@ textarea
 .fb-menu-items-add-options
 {
     text-transform: none;
-}
-
-.fb-content-form-block-caption
-{
-    margin-top: 4pt 0;
 }

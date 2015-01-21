@@ -4,7 +4,7 @@
 **                                ===========                                 **
 **                                                                            **
 **                      Online Form Building Application                      **
-**                       Version: 0.3.01.427 (20150119)                       **
+**                       Version: 0.3.01.464 (20150121)                       **
 **                         File: static/js/blocks.js                          **
 **                                                                            **
 **               For more information about the project, visit                **
@@ -44,11 +44,12 @@ function FormBlockObject(args)
     /* Set default values */
     this._name  = args.blockName || 'Unnamed Block';
     this._classPrefix = (args.classPrefix || '') + '-block';
-    this._units = [];
+    this._fixUnits = [];
+    this._varUnits = [];
 
 
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.setId = function(blockId)
+    this.setId = function (blockId)
     {
         this._id = blockId;
     };
@@ -65,11 +66,20 @@ function FormBlockObject(args)
     this.serialise = function ()
     {
         var dataUnits = [],
-            thisUnits  = this._units;
+            thisUnits = [this._fixUnits, this._varUnits];
 
         /* Collect all data from units */
+        var j,
+            data,
+            units;
         for (var i=0; i<thisUnits.length; i++)
-            dataUnits.push(thisUnits[i].serialise());
+        {
+            data  = [];
+            units = thisUnits[i];
+            for (j=0; j<units.length; j++)
+                data.push(units[j].serialise());
+            dataUnits.push(data);
+        }
 
         /* Return the serialisation */
         return {type  : this._type,
@@ -78,29 +88,60 @@ function FormBlockObject(args)
 
 
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.deserialise = function (data)
+    this.deserialise = function (inputData)
     {
-        var thisUnits = this._units,
-            dataUnits = data.units;
+        var thisUnits = [this._fixUnits, this._varUnits],
+            dataUnits = inputData.units;
 
         /* Pass serialised data back to the units */
-        for (var i=0; i<dataUnits.length; i++)
-            thisUnits[i].deserialise(dataUnits[i]);
+        var j,
+            data,
+            unit,
+            units;
+        for (var i=0; i<thisUnits.length; i++)
+        {
+            data  = dataUnits[i];
+            units = thisUnits[i];
+            for (j=0; j<data.length; j++)
+                (units[j] || this.addVarUnit()).deserialise(data[j]);
+        }
     };
 
 
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
     this.render = function (parent)
     {
-        /* Create container for block */
-        var element = this._element = document.createElement('div');
-        element.className = this._classPrefix;
-        parent.appendChild(element);
+        var i,
+            units,
+            element,
+            elements;
 
-        /* Build all units */
-        var units = this._units;
-        for (var i=0; i<units.length; i++)
+        /* Create container for fix and variable unit containers */
+        elements = document.createElement('div');
+        elements.className = this._classPrefix;
+        parent.appendChild(elements);
+
+        /* Create fix unit container */
+        element = this._fixUnitsElement = document.createElement('div');
+        element.className = this._classPrefix + '-fix';
+        elements.appendChild(element);
+
+        /* Build fixed units */
+        units = this._fixUnits;
+        for (i=0; i<units.length; i++)
             units[i].render(element);
+
+        /* Create variable unit container
+           and build variable units if block has any */
+        if (this._hasVarUnits)
+        {
+            element = this._varUnitsElement = document.createElement('div');
+            element.className = this._classPrefix + '-var';
+            elements.appendChild(element);
+            units = this._varUnits;
+            for (i=0; i<units.length; i++)
+                units[i].render(element);
+        }
     };
 }
 
@@ -122,12 +163,10 @@ SingleTextInputBlock: function (args)
     FormBlockObject.call(this, args);
 
     /* Set inputs of this block */
-    this._units = [
-        new g.units.StaticTextUnit({captionText: args.inputLabel,
-                                    classPrefix: this._classPrefix}),
-        new g.units.SingleLineTextInputUnit({defaultText: args.inputText,
-                                             classPrefix: this._classPrefix}),
-    ];
+    this._fixUnits.push(new g.units.StaticTextUnit({captionText: args.inputLabel,
+                                                    classPrefix: this._classPrefix}));
+    this._fixUnits.push(new g.units.SingleLineTextInputUnit({defaultText: args.inputText,
+                                                             classPrefix: this._classPrefix}));
 },
 
 
@@ -145,12 +184,79 @@ SingleTextInputBlockWithHelp: function (args)
     FormBlockObject.call(this, args);
 
     /* Set inputs of this block */
-    this._units = [
-        new g.units.StaticTextUnit({captionText: args.inputLabel,
-                                    classPrefix: this._classPrefix}),
-        new g.units.MultiLineTextInputUnit({defaultText: args.inputText,
-                                            classPrefix: this._classPrefix}),
-    ];
+    this._fixUnits.push(new g.units.StaticTextUnit({captionText: args.inputLabel,
+                                                    classPrefix: this._classPrefix}));
+    this._fixUnits.push(new g.units.MultiLineTextInputUnit({defaultText: args.inputText,
+                                                            classPrefix: this._classPrefix}));
+},
+
+/*----------------------------------------------------------------------------*/
+/*  */
+ChoiceBlockWithHelp: function (args)
+{
+    /* Initialisation: Part 1 */
+    args = args || {};
+    FormBlockObject.call(this, args);
+    this._hasVarUnits = true;
+
+    /* Set inputs of this block */
+    this._fixUnits.push(
+        new g.units.StaticTextUnit(
+            {captionText: args.inputLabel,
+             classPrefix: this._classPrefix}));
+    this._fixUnits.push(
+        new g.units.MultiLineTextInputUnit(
+            {defaultText: args.inputText,
+             classPrefix: this._classPrefix}));
+    this._fixUnits.push(
+        new g.units.TextButtonUnit(
+            {captionText: 'add',
+             classPrefix: this._classPrefix + '-add',
+             eventCallbacks: {click: (function () {this.addVarUnit();}).bind(this)}}));
+    this._fixUnits.push(
+        new g.units.TextButtonUnit(
+            {captionText: 'remove',
+             classPrefix: this._classPrefix + '-remove',
+             eventCallbacks: {click: (function () {this.removeVarUnit();}).bind(this)}}));
+
+    /* Wrapping base-class' render method */
+    // var thisRender = this.render;
+
+    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    this.addVarUnit = function ()
+    {
+        var i    = this._varUnits.length + 1,
+            unit = new g.units.SingleLineTextInputUnit({defaultText: 'option ' + i,
+                                                        classPrefix: this._classPrefix});
+        this._varUnits.push(unit);
+        unit.render(this._varUnitsElement);
+        return unit;
+    };
+
+
+    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    this.removeVarUnit = function ()
+    {
+        this._varUnits.pop();
+        this._varUnitsElement.removeChild(this._varUnitsElement.lastChild);
+    };
+},
+
+/*----------------------------------------------------------------------------*/
+/*  */
+GroupWithHelp: function (args)
+{
+    /* Initialisation */
+    args = args || {};
+    FormBlockObject.call(this, args);
+
+    console.log(Object.keys(blocks));
+
+    /* Set inputs of this block */
+    // this._fixUnits.push(new g.units.StaticTextUnit({captionText: args.inputLabel,
+    //                                                 classPrefix: this._classPrefix}));
+    // this._fixUnits.push(new g.units.MultiLineTextInputUnit({defaultText: args.inputText,
+    //                                                         classPrefix: this._classPrefix}));
 },
 
 }; /* End of 'blocks' name-space */
