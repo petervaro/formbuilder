@@ -4,7 +4,7 @@
 **                                ===========                                 **
 **                                                                            **
 **                      Online Form Building Application                      **
-**                       Version: 0.3.01.464 (20150121)                       **
+**                       Version: 0.3.01.522 (20150121)                       **
 **                       File: static/js/formbuilder.js                       **
 **                                                                            **
 **               For more information about the project, visit                **
@@ -127,6 +127,7 @@ FormBuilder: function (args)
         /* Provide new identifier to the new block-object and store it */
         block.setId(this._id++);
         block.setType(reference);
+        block.setRoot(this);
         this._blocks.push(block);
 
         /* Render HTML */
@@ -138,9 +139,12 @@ FormBuilder: function (args)
 
 
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.pullBlock = function ()
+    this.removeBlockIstance = function (block)
     {
-        // pass
+        /* Remove from DOM */
+        this._blocksParent.removeChild(block.getRootElement());
+        /* Remove from structure */
+        this._blocks.splice(this._blocks.indexOf(block));
     };
 
 
@@ -350,7 +354,7 @@ FormBuilder: function (args)
 
         /* Set event for user changing value and set default value */
         input.addEventListener('change',
-        (function ()
+        (function (input)
         {
             this._title = input.value;
         }).bind(this, input));
@@ -373,7 +377,7 @@ FormBuilder: function (args)
 
         /* Set event for user changing value */
         select.addEventListener('change',
-        (function ()
+        (function (select)
         {
             this._lang = select.value;
         }).bind(this, select));
@@ -401,7 +405,7 @@ FormBuilder: function (args)
            Create menu-items-add */
         div = document.createElement('div');
         div.className = subClassPrefix = classPrefix + '-add';
-        div.appendChild(document.createTextNode('add new'));
+        div.appendChild(document.createTextNode('append new'));
 
         /* -----------------------------
            Create menu-items-add-options */

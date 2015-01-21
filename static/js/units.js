@@ -4,7 +4,7 @@
 **                                ===========                                 **
 **                                                                            **
 **                      Online Form Building Application                      **
-**                       Version: 0.3.01.464 (20150121)                       **
+**                       Version: 0.3.01.518 (20150121)                       **
 **                          File: static/js/units.js                          **
 **                                                                            **
 **               For more information about the project, visit                **
@@ -27,6 +27,21 @@
 **                                                                            **
 ************************************************************************ INFO */
 
+/* TODO: does fb really needs the Unit._type property? What for? */
+/* Explanation of the Unit instances.
+    Properties:
+        this._type
+            It is only meaningful when the formbuilder rebuilds the
+            form->block->unit, so it can choose the proper unit-object.
+            The number has to be unique, but can be anything.
+
+            The convention is:
+                1x => static, no events
+                2x => static, with events
+                3x => dynamic, no events
+                4x => dynamic, with events
+*/
+
 (function (){
 'use strict';
 
@@ -42,20 +57,6 @@ function Unit(args)
     {
         // pass
     };
-
-
-    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.serialise = function ()
-    {
-        // pass
-    };
-
-
-    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.deserialise = function ()
-    {
-        // pass
-    };
 }
 
 
@@ -68,7 +69,7 @@ StaticTextUnit: function (args)
     /* Initialisation */
     args = args || {};
     Unit.call(this, args);
-    this._type = 'StaticTextUnit';
+    this._type = 10;
 
     /* Store values */
     this._captionText = args.captionText || 'Caption';
@@ -89,97 +90,12 @@ StaticTextUnit: function (args)
 
 
 /*----------------------------------------------------------------------------*/
-SingleLineTextInputUnit: function (args)
-{
-    /* Initialisation */
-    args = args || {};
-    Unit.call(this, args);
-    this._type = 'SingleLineTextInputUnit';
-
-    /* Store values */
-    this._captionText = args.captionText || 'Caption';
-    this._defaultText = args.defaultText || 'Default text';
-    this._classPrefix = args.classPrefix || '';
-
-
-    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.render = function (parent)
-    {
-        /* Add input */
-        var element = this._userValue = document.createElement('input');
-        element.className = this._classPrefix + '-field';
-        element.type = 'text';
-        element.value = this._defaultText;
-        parent.appendChild(element);
-    };
-
-
-    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.serialise = function ()
-    {
-        return [{type  : this._type,
-                 label : this._userValue.value}];
-    };
-
-
-    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.deserialise = function (data)
-    {
-        this._userValue.value = data[0].label;
-    };
-},
-
-
-
-/*----------------------------------------------------------------------------*/
-MultiLineTextInputUnit: function (args)
-{
-    /* Initialisation */
-    args = args || {};
-    Unit.call(this, args);
-    this._type = 'MultiLineTextInputUnit';
-
-    /* Store values */
-    this._captionText = args.captionText || 'Caption';
-    this._defaultText = args.defaultText || 'Default text';
-    this._classPrefix = args.classPrefix || '';
-
-
-    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.render = function (parent)
-    {
-        /* Add textarea */
-        var element = this._userValue = document.createElement('textarea');
-        element.className = this._classPrefix + '-field';
-        element.value = this._defaultText;
-        parent.appendChild(element);
-    };
-
-
-    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.serialise = function ()
-    {
-        return [{type  : this._type,
-                 label : this._userValue.value}];
-    };
-
-
-    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.deserialise = function (data)
-    {
-        this._userValue.value = data[0].label;
-    };
-},
-
-
-
-/*----------------------------------------------------------------------------*/
 TextButtonUnit: function (args)
 {
     /* Initialisation */
     args = args || {};
     Unit.call(this, args);
-    this._type = 'TextButtonUnit';
+    this._type = 20;
 
     this._captionText = args.captionText || 'Button';
     this._classPrefix = args.classPrefix || '';
@@ -205,6 +121,92 @@ TextButtonUnit: function (args)
         parent.appendChild(element);
     };
 },
+
+
+
+/*----------------------------------------------------------------------------*/
+SingleLineTextInputUnit: function (args)
+{
+    /* Initialisation */
+    args = args || {};
+    Unit.call(this, args);
+    this._type = 30;
+
+    /* Store values */
+    this._captionText = args.captionText || 'Caption';
+    this._defaultText = args.defaultText || 'Default text';
+    this._classPrefix = args.classPrefix || '';
+
+
+    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    this.render = function (parent)
+    {
+        /* Add input */
+        var element = this._userValue = document.createElement('input');
+        element.className = this._classPrefix + '-field';
+        element.type = 'text';
+        element.value = this._defaultText;
+        parent.appendChild(element);
+    };
+
+
+    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    this.serialise = function ()
+    {
+        return {type  : this._type,
+                label : this._userValue.value};
+    };
+
+
+    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    this.deserialise = function (data)
+    {
+        this._userValue.value = data.label;
+    };
+},
+
+
+
+/*----------------------------------------------------------------------------*/
+MultiLineTextInputUnit: function (args)
+{
+    /* Initialisation */
+    args = args || {};
+    Unit.call(this, args);
+    this._type = 31;
+
+    /* Store values */
+    this._captionText = args.captionText || 'Caption';
+    this._defaultText = args.defaultText || 'Default text';
+    this._classPrefix = args.classPrefix || '';
+
+
+    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    this.render = function (parent)
+    {
+        /* Add textarea */
+        var element = this._userValue = document.createElement('textarea');
+        element.className = this._classPrefix + '-field';
+        element.value = this._defaultText;
+        parent.appendChild(element);
+    };
+
+
+    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    this.serialise = function ()
+    {
+        return {type  : this._type,
+                label : this._userValue.value};
+    };
+
+
+    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    this.deserialise = function (data)
+    {
+        this._userValue.value = data.label;
+    };
+},
+
 
 }; /* End of 'units' name-space */
 /* Make 'units' accessible from globals */

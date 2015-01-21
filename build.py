@@ -4,7 +4,7 @@
 ##                                ===========                                 ##
 ##                                                                            ##
 ##                      Online Form Building Application                      ##
-##                       Version: 0.3.01.379 (20150118)                       ##
+##                       Version: 0.3.01.485 (20150121)                       ##
 ##                               File: build.py                               ##
 ##                                                                            ##
 ##               For more information about the project, visit                ##
@@ -29,6 +29,7 @@
 
 # Module level constants
 CURRENT_DIR = '.'
+POST_COMMIT = 0  # True or False => skip CLIC (version) changes only
 
 # Import python modules
 from copy import deepcopy
@@ -55,9 +56,15 @@ try:
     # Update version
     cutils.cver.version(CURRENT_DIR, sub_max=9, rev_max=99, build_max=999)
     # Collect all special comments
-    cutils.ccom.collect(CURRENT_DIR, include=ccom_include, exclude=exclude)
+    cutils.ccom.collect(CURRENT_DIR,
+                        include=ccom_include,
+                        exclude=exclude,
+                        overwrite=POST_COMMIT)
     # Update header comments
-    cutils.clic.header(CURRENT_DIR, include=clic_include, exclude=exclude)
+    cutils.clic.header(CURRENT_DIR,
+                       include=clic_include,
+                       exclude=exclude,
+                       overwrite=POST_COMMIT)
 except ImportError:
     print('[WARNING] cutils modules are missing: '
           'install it from http://www.cutils.org')

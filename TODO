@@ -4,7 +4,7 @@
 ##                                ===========                                 ##
 ##                                                                            ##
 ##                      Online Form Building Application                      ##
-##                       Version: 0.3.01.480 (20150121)                       ##
+##                       Version: 0.3.01.528 (20150121)                       ##
 ##                                 File: TODO                                 ##
 ##                                                                            ##
 ##               For more information about the project, visit                ##
@@ -27,7 +27,7 @@
 ##                                                                            ##
 ######################################################################## INFO ##
 
-#----------------------------- 7 POSTS IN 6 FILES -----------------------------#
+#----------------------------- 5 POSTS IN 5 FILES -----------------------------#
 TODO:
   #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
   # 1
@@ -39,61 +39,68 @@ TODO:
   #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
   # 2
   - file: build.py
-    line: 44
+    line: 45
     note: |
           add `>>>` as `MARKER` => `this is where I left`
 
   #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
   # 3
-  - file: configurator_gui/blocks.py
-    line: 37
+  - file: static/js/main.js
+    line: 83
     note: |
-          remove NumVar as it is not in use anymore.. probably? ;)
+          add option `blockPrototypes` => can be a string, which is
+          a reference to an existing block-prototype; or can be a
+          full declaration of a block 
 
   #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
   # 4
-  - file: configurator_gui/main.py
-    line: 134
+  - file: static/js/units.js
+    line: 30
     note: |
-          <kill menu, title and language here>
+          does fb really needs the Unit._type property? What for? 
 
   #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
   # 5
-  - file: configurator_gui/utils.py
-    line: 153
+  - file: static/js/blocks.js
+    line: 53
     note: |
-          decorate with operators
-
-  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
-  # 6
-  - file: static/js/generator.js
-    line: 74
-    note: |
-          This is the same as _singlelineBlock() 
-
-  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
-  # 7
-  - file: static/js/generator.js
-    line: 138
-    note: |
-          This is the same as _checkboxBlock() 
+          decide if we need to set this to:
+          (function () {window.setTimeout( <function goes here>, 0 );}) 
 
 
 
-#----------------------------- 2 POSTS IN 1 FILES -----------------------------#
+#----------------------------- 4 POSTS IN 2 FILES -----------------------------#
 HACK:
   #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
   # 1
-  - file: static/js/main.js
-    line: 89
+  - file: filemanager.py
+    line: 61
     note: |
-          this is for testing purposes only 
+          only for testing purposes
 
   #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
   # 2
+  - file: filemanager.py
+    line: 74
+    note: |
+          only for testing purposes
+
+  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
+  # 3
   - file: static/js/main.js
-    line: 97
+    line: 92
     note: |
           for testing purposes only
 
+  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
+  # 4
+  - file: static/js/main.js
+    line: 95
+    note: |
+          for testing purposes only
+
+
+
+#----------------------------- 0 POSTS IN 0 FILES -----------------------------#
+ALERT:
 

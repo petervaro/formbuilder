@@ -4,7 +4,7 @@
 **                                ===========                                 **
 **                                                                            **
 **                      Online Form Building Application                      **
-**                       Version: 0.3.01.464 (20150121)                       **
+**                       Version: 0.3.01.506 (20150121)                       **
 **                          File: static/js/main.js                           **
 **                                                                            **
 **               For more information about the project, visit                **
@@ -59,7 +59,7 @@ function main()
             blockName   : 'Question Block',
             inputLabel  : 'Question:',
             inputText   : 'A question goes here...',
-            helpText    : 'Add hints to the question...',
+            helpText    : 'Add hints to this question...',
         }}, 'question');
 
     /* Specify radio-block */
@@ -69,7 +69,7 @@ function main()
             blockName   : 'Radio-button Block',
             inputLabel  : 'Question:',
             inputText   : 'A question goes here...',
-            helpText    : 'Add hints to the question...',
+            helpText    : 'Add hints to this question...',
         }}, 'radio');
 
     /* Specify radio-block */
@@ -79,14 +79,20 @@ function main()
             blockName   : 'Group Block',
             inputLabel  : 'Question:',
             inputText   : 'A question goes here...',
-            helpText    : 'Add hints to the question...',
+            helpText    : 'Add hints to this question...',
+            /* TODO: add option `blockPrototypes` => can be a string, which is
+                     a reference to an existing block-prototype; or can be a
+                     full declaration of a block */
         }}, 'group');
 
 
     /* Render application */
     fb.render();
 
-    /* HACK: this is for testing purposes only */
+    // HACK: for testing purposes only
+    g.fb = fb;
+
+    // HACK: for testing purposes only
     fb.newBlockInstance('section');
     fb.newBlockInstance('question');
     var b = fb.newBlockInstance('radio');
@@ -94,16 +100,10 @@ function main()
         b.addVarUnit();
     // fb.newBlockInstance('group')
 
-    // HACK: for testing purposes only
-    g.fb = fb;
-
 
     // >>> TODO:
     //  1) Create all kinds of units
     //  2) Create all types of blocks (with remove buttons)
-    //  3) Make CSS work
-    //  4) Add blocks
-    //  5) Remove blocks
     //  6) Save and Load buttons for menu
     //  7) Serialise
     //  8) Deserialise
@@ -111,16 +111,4 @@ function main()
     // 10) Create the database
     // 11) Create the authentication
     // 12) Document database => connect to admin
-
-
-
-    /* Create block-instances */
-    // fb.newBlockInstance('section');
-    // fb.newBlockInstance('question');
-    // fb.newBlockInstance('question');
-
-    /* Serialise what we have so far */
-    // console.log(JSON.stringify(fb.serialise()));
-    // fb.saveData();
-    // console.log(fb.loadForm());
 }

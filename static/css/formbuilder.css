@@ -4,7 +4,7 @@
 **                                ===========                                 **
 **                                                                            **
 **                      Online Form Building Application                      **
-**                       Version: 0.3.01.477 (20150121)                       **
+**                       Version: 0.3.01.512 (20150121)                       **
 **                      File: static/css/formbuilder.css                      **
 **                                                                            **
 **               For more information about the project, visit                **
@@ -28,6 +28,7 @@
 ************************************************************************ INFO */
 
 @import url(http://fonts.googleapis.com/css?family=Dosis&subset=latin,latin-ext);
+@import url(http://fonts.googleapis.com/css?family=Source+Code+Pro&subset=latin,latin-ext);
 
 body
 {
@@ -41,6 +42,13 @@ textarea
     resize: vertical;
 }
 
+input,
+textarea
+{
+    font-family: 'Source Code Pro', monospace;
+    font-size: 8pt;
+}
+
 #fb-menu
 {
     padding: 10pt 0;
@@ -52,9 +60,9 @@ textarea
 }
 
 .fb-menu-items-add,
-.fb-content-form-block-remove,
-.fb-blocks-block-add-button,
-.fb-blocks-block-remove-button
+.fb-blocks-block-remove-button,
+.fb-blocks-block-option-append-button,
+.fb-blocks-block-option-remove-button
 {
     cursor: pointer;
     -webkit-user-select: none;
@@ -87,10 +95,16 @@ textarea
     margin: 0 4pt;
 }
 
+.fb-menu-items-info-title,
+.fb-menu-items-info-language
+{
+    text-transform: capitalize;
+}
+
 #fb-blocks,
 .fb-menu-items
 {
-    width: 512pt;
+    width: 550pt;
     margin: 0 auto;
 }
 
@@ -115,7 +129,7 @@ textarea
 }
 
 .fb-blocks-block-caption,
-.fb-content-form-block-remove
+.fb-blocks-block-remove-button
 {
     padding: 2pt;
     display: inline-block;
@@ -131,7 +145,7 @@ textarea
     color: #808080;
 }
 
-.fb-content-form-block-remove
+.fb-blocks-block-remove-button
 {
     position: absolute;
     top: 0;
@@ -143,7 +157,7 @@ textarea
 
 .fb-blocks-block
 {
-    padding: 10pt;
+    padding: 20pt 10pt 30pt;
 }
 
 .fb-blocks-block-field
@@ -152,8 +166,8 @@ textarea
     width: 100%;
 }
 
-.fb-blocks-block-add-button,
-.fb-blocks-block-remove-button
+.fb-blocks-block-option-append-button,
+.fb-blocks-block-option-remove-button
 {
     display: inline-block;
     clear: both;
@@ -162,12 +176,12 @@ textarea
     text-transform: uppercase;
 }
 
-.fb-blocks-block-add-button
+.fb-blocks-block-option-append-button
 {
     background: #0099FF;
 }
 
-.fb-blocks-block-remove-button
+.fb-blocks-block-option-remove-button
 {
     background: #CC3300;
 }
