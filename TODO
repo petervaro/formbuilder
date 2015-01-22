@@ -4,7 +4,7 @@
 ##                                ===========                                 ##
 ##                                                                            ##
 ##                      Online Form Building Application                      ##
-##                       Version: 0.3.01.528 (20150121)                       ##
+##                       Version: 0.3.01.563 (20150122)                       ##
 ##                                 File: TODO                                 ##
 ##                                                                            ##
 ##               For more information about the project, visit                ##
@@ -38,69 +38,72 @@ TODO:
 
   #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
   # 2
-  - file: build.py
-    line: 45
-    note: |
-          add `>>>` as `MARKER` => `this is where I left`
-
-  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
-  # 3
-  - file: static/js/main.js
-    line: 83
-    note: |
-          add option `blockPrototypes` => can be a string, which is
-          a reference to an existing block-prototype; or can be a
-          full declaration of a block 
-
-  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
-  # 4
   - file: static/js/units.js
     line: 30
     note: |
           does fb really needs the Unit._type property? What for? 
 
   #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
-  # 5
+  # 3
+  - file: build.py
+    line: 45
+    note: |
+          add `>>>` as `MARKER` => `this is where I left`
+
+  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
+  # 4
   - file: static/js/blocks.js
     line: 53
     note: |
           decide if we need to set this to:
           (function () {window.setTimeout( <function goes here>, 0 );}) 
 
+  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
+  # 5
+  - file: static/js/formbuilder.js
+    line: 80
+    note: |
+          wrap methods of rootCollection programatically
+          /* Wrap methods to create a consistent interface */
+          var wrappedMethods = ['registerBlockPrototype',
+                          'newBlockInstance',
+                          'removeBlockIstance',
+                          'deserialise',
+                          'serialise',
+                          'render'];
+          
+          var method,
+          collection = this._rootCollection;
+          for (var i=0; i<wrappedMethods.length; i++)
+          {
+          method = wrappedMethods[i]
+          this[method] = (function ()
+          {
+            return collection[method].apply(collection, arguments);
+          }).bind(this);
+          }
 
 
-#----------------------------- 4 POSTS IN 2 FILES -----------------------------#
+
+#----------------------------- 2 POSTS IN 1 FILES -----------------------------#
 HACK:
   #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
   # 1
-  - file: filemanager.py
-    line: 61
+  - file: static/js/main.js
+    line: 133
     note: |
-          only for testing purposes
+          for testing purposes only
 
   #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
   # 2
-  - file: filemanager.py
-    line: 74
-    note: |
-          only for testing purposes
-
-  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
-  # 3
   - file: static/js/main.js
-    line: 92
+    line: 136
     note: |
           for testing purposes only
+          fb.newBlockInstance('section');
+          fb.newBlockInstance('question');
+          var b = fb.newBlockInstance('radio');
+          for (var i=0; i<5; i++)
+          b.addVarUnit();
 
-  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
-  # 4
-  - file: static/js/main.js
-    line: 95
-    note: |
-          for testing purposes only
-
-
-
-#----------------------------- 0 POSTS IN 0 FILES -----------------------------#
-ALERT:
 

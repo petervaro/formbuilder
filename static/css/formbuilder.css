@@ -4,7 +4,7 @@
 **                                ===========                                 **
 **                                                                            **
 **                      Online Form Building Application                      **
-**                       Version: 0.3.01.512 (20150121)                       **
+**                       Version: 0.3.01.529 (20150122)                       **
 **                      File: static/css/formbuilder.css                      **
 **                                                                            **
 **               For more information about the project, visit                **
@@ -115,7 +115,7 @@ textarea
 
 #fb-blocks
 {
-    padding: 64pt 16pt 16pt;
+    padding: 64pt 16pt 0;
     background: white;
     border-left : 1pt solid #e8e8e8;
     border-right: 1pt solid #e8e8e8;

@@ -4,7 +4,7 @@
 **                                ===========                                 **
 **                                                                            **
 **                      Online Form Building Application                      **
-**                       Version: 0.3.01.525 (20150121)                       **
+**                       Version: 0.3.01.558 (20150122)                       **
 **                         File: static/js/blocks.js                          **
 **                                                                            **
 **               For more information about the project, visit                **
@@ -80,6 +80,13 @@ function FormBlockObject(args)
     this.getRootElement = function ()
     {
         return this._rootElement;
+    };
+
+
+    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    this.setRootElement = function (rootElement)
+    {
+        this._rootElement = rootElement;
     };
 
 
@@ -285,28 +292,11 @@ ChoiceBlockWithHelp: function (args)
     this.removeVarUnit = function ()
     {
         this._varUnits.pop();
-        this._varUnitsElement.removeChild(this._varUnitsElement.lastChild);
+        if (this._varUnitsElement.lastChild)
+            this._varUnitsElement.removeChild(this._varUnitsElement.lastChild);
     };
 },
 
-
-
-/*----------------------------------------------------------------------------*/
-/*  */
-GroupWithHelp: function (args)
-{
-    /* Initialisation */
-    args = args || {};
-    FormBlockObject.call(this, args);
-
-    console.log(Object.keys(blocks));
-
-    /* Set inputs of this block */
-    // this._fixUnits.push(new g.units.StaticTextUnit({captionText: args.inputLabel,
-    //                                                 classPrefix: this._classPrefix}));
-    // this._fixUnits.push(new g.units.MultiLineTextInputUnit({defaultText: args.inputText,
-    //                                                         classPrefix: this._classPrefix}));
-},
 
 }; /* End of 'blocks' name-space */
 /* Make 'blocks' accessible from globals */

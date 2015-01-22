@@ -4,7 +4,7 @@
 ##                                ===========                                 ##
 ##                                                                            ##
 ##                      Online Form Building Application                      ##
-##                       Version: 0.3.01.449 (20150119)                       ##
+##                       Version: 0.3.01.529 (20150122)                       ##
 ##                            File: filemanager.py                            ##
 ##                                                                            ##
 ##               For more information about the project, visit                ##
@@ -64,7 +64,7 @@ def _get_id():
     try:
         return max(toi(d.name) for d in Path(_PATH).iterdir() if d.is_dir()) + 1
     # If no form has already been saved
-    except ValueError:
+    except (ValueError, FileNotFoundError):
         return 1
 
 

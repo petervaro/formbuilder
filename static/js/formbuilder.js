@@ -4,7 +4,7 @@
 **                                ===========                                 **
 **                                                                            **
 **                      Online Form Building Application                      **
-**                       Version: 0.3.01.522 (20150121)                       **
+**                       Version: 0.3.01.558 (20150122)                       **
 **                       File: static/js/formbuilder.js                       **
 **                                                                            **
 **               For more information about the project, visit                **
@@ -27,12 +27,13 @@
 **                                                                            **
 ************************************************************************ INFO */
 
-(function(){
+(function ()
+{
 'use strict';
 
 /* Include order check */
-if (!g.blocks)
-    throw "'formbuilder.js' has to be placed after 'blocks.js'";
+if (!g.collections)
+    throw "'formbuilder.js' has to be placed after 'collections.js'";
 
 /* Public objects (in 'formbuilder' name-space) */
 var formbuilder = {
@@ -42,15 +43,6 @@ var formbuilder = {
    application itself, it reads and writes the form-serialisation. */
 FormBuilder: function (args)
 {
-    /* Automatic identifiers for prototypes of block-objects */
-    this._protoId = 0;
-    /* Block-object prototypes */
-    this._protos = {};
-    /* Identifier for instances of block-objects */
-    this._blockId = 0;
-    /* Instanced block-objects */
-    this._blocks = [];
-
     /* Temporary storage */
     var variable,
         body = document.body;
@@ -60,25 +52,50 @@ FormBuilder: function (args)
 
     /* CSS name-space */
     variable = args.classPrefix;
-    this._classPrefix = (typeof variable === 'string' ||
-                         variable instanceof String) ? variable : '';
-
-    var classPrefix = this._classPrefix + (this._classPrefix ? '-' : '');
+    var classPrefix = this._classPrefix = (typeof variable === 'string' ||
+                                           variable instanceof String) ? variable : '';
 
     /* DOM parent for menu items */
     variable = body.appendChild(document.createElement('div'));
-    variable.id = classPrefix + 'menu';
+    variable.id = classPrefix + (classPrefix ? '-' : '') + 'menu';
     this._menuParent = variable;
 
     /* DOM parent for block items */
     variable = body.appendChild(document.createElement('div'));
-    variable.id = classPrefix + 'blocks';
-    this._blocksParent = variable;
+    variable.id = classPrefix + (classPrefix ? '-' : '') + 'blocks';
+
+    /* Create main collection, which will
+       collect blocks and other collections */
+    this._rootCollection = new g.collections.Collection({
+        primary     : true,
+        rootElement : variable,
+        classPrefix : classPrefix,
+    });
 
     /* Set languages */
     variable = args.languages;
     this._languages = variable instanceof Object ? variable : {en: 'English'};
     this._lang = Object.keys(this._languages)[0];
+
+    // TODO: wrap methods of rootCollection programatically
+    // /* Wrap methods to create a consistent interface */
+    // var wrappedMethods = ['registerBlockPrototype',
+    //                       'newBlockInstance',
+    //                       'removeBlockIstance',
+    //                       'deserialise',
+    //                       'serialise',
+    //                       'render'];
+    //
+    // var method,
+    //     collection = this._rootCollection;
+    // for (var i=0; i<wrappedMethods.length; i++)
+    // {
+    //     method = wrappedMethods[i]
+    //     this[method] = (function ()
+    //     {
+    //         return collection[method].apply(collection, arguments);
+    //     }).bind(this);
+    // }
 
 
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
@@ -94,99 +111,6 @@ FormBuilder: function (args)
     {
         this._title = title;
         this._titleInput.value = title;
-    };
-
-
-    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.registerBlockPrototype = function (prototype, reference)
-    {
-        /* Get or set reference, store prototype and return it*/
-        reference = reference || this._protoId++;
-        prototype = prototype || {};
-
-        var details = prototype.details = prototype.details || {};
-
-        /* Leave or set CSS class-prefix */
-        details.classPrefix = details.classPrefix ||
-                              this._classPrefix +
-                              (this._classPrefix ? '-' : '') + 'blocks';
-
-        /* Store new prototype and return reference */
-        this._protos[reference] = prototype;
-        return reference;
-    };
-
-
-    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.newBlockInstance = function (reference)
-    {
-        /* Get object-prototype and details and create a new instance */
-        var prototype = this._protos[reference];
-        var block = new prototype.object(prototype.details);
-
-        /* Provide new identifier to the new block-object and store it */
-        block.setId(this._id++);
-        block.setType(reference);
-        block.setRoot(this);
-        this._blocks.push(block);
-
-        /* Render HTML */
-        block.render(this._blocksParent);
-
-        /* Return new block object */
-        return block;
-    };
-
-
-    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.removeBlockIstance = function (block)
-    {
-        /* Remove from DOM */
-        this._blocksParent.removeChild(block.getRootElement());
-        /* Remove from structure */
-        this._blocks.splice(this._blocks.indexOf(block));
-    };
-
-
-    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.deserialise = function (data)
-    {
-        /* Re/set basic informations */
-        this.resetForm(data.lang, data.title, data.formId);
-        console.log('[DESERIALISE] formId = ', data.formId);
-
-        /* Rebuild form from serialised data */
-        var block,
-            blockData,
-            blocks = data.blocks;
-        for (var i=0; i<blocks.length; i++)
-        {
-            /* Create new block */
-            blockData = blocks[i];
-            block = this.newBlockInstance(blockData.type);
-            /* Pass serialised data to block */
-            block.deserialise(blockData);
-        }
-    };
-
-
-    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.serialise = function ()
-    {
-        var dataBlocks = [],
-            thisBlocks = this._blocks;
-
-        /* Collect all data from blocks */
-        for (var i=0; i<thisBlocks.length; i++)
-            dataBlocks.push(thisBlocks[i].serialise());
-
-        console.log('[ SERIALISE ] formId = ', this._formId || null);
-
-        /* Return the serialisation */
-        return {title  : this._title,
-                lang   : this._lang,
-                formId : this._formId || null,
-                blocks : dataBlocks};
     };
 
 
@@ -223,14 +147,8 @@ FormBuilder: function (args)
         /* Request release of current form */
         this.closeForm();
 
-        /* Remove existing data */
-        var blocksParent = this._blocksParent;
-        while (blocksParent.firstChild)
-            blocksParent.removeChild(blocksParent.firstChild);
-
-        /* Reset storage and counter */
-        this._blocks = [];
-        this._blockId = 0;
+        /* Remove blocks from root collection */
+        this._rootCollection.removeAllBlockInstances();
 
         /* Reset form-id, langauge and title */
         this._formId = id || undefined;
@@ -309,6 +227,43 @@ FormBuilder: function (args)
         });
 
         request.send();
+    };
+
+
+
+
+    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    this.registerBlockPrototype = function ()
+    {
+        return this._rootCollection.registerBlockPrototype.apply(this._rootCollection, arguments);
+    };
+
+
+    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    this.newBlockInstance = function ()
+    {
+        return this._rootCollection.newBlockInstance.apply(this._rootCollection, arguments);
+    };
+
+
+    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    this.removeBlockIstance = function ()
+    {
+        return this._rootCollection.removeBlockIstance.apply(this._rootCollection, arguments);
+    };
+
+
+    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    this.deserialise = function ()
+    {
+        return this._rootCollection.deserialise.apply(this._rootCollection, arguments);
+    };
+
+
+    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    this.serialise = function ()
+    {
+        return this._rootCollection.serialise.apply(this._rootCollection, arguments);
     };
 
 
@@ -401,47 +356,8 @@ FormBuilder: function (args)
         div.appendChild(select);
         form.appendChild(div);
 
-        /* ---------------------
-           Create menu-items-add */
-        div = document.createElement('div');
-        div.className = subClassPrefix = classPrefix + '-add';
-        div.appendChild(document.createTextNode('append new'));
-
-        /* -----------------------------
-           Create menu-items-add-options */
-        select = document.createElement('select');
-        select.className = subClassPrefix + '-options';
-
-        /* If clicking on the selection */
-        select.addEventListener('click',
-        function (event)
-        {
-            event.stopPropagation();
-        });
-
-        /* Construct options in selection */
-        object = this._protos;
-        objectKeys = Object.keys(object);
-        for (i=0; i<objectKeys.length; i++)
-        {
-            key = objectKeys[i];
-            option = document.createElement('option');
-            option.value = key;
-            option.innerHTML = object[key].details.blockName;
-            select.appendChild(option);
-        }
-
-        /* If clicking on the div itself */
-        div.addEventListener('click',
-        (function ()
-        {
-            this.newBlockInstance(select.value);
-        }).bind(this, select));
-
-        /* Add newly created elements to structure */
-        div.appendChild(select);
-        div.appendChild(document.createTextNode('block'));
-        items.appendChild(div);
+        /* Render collections' menu element */
+        this._rootCollection.render(items, classPrefix);
 
         /* -----------------------------------------
            Remove children from menu if there is any */

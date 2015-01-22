@@ -4,7 +4,7 @@
 **                                ===========                                 **
 **                                                                            **
 **                      Online Form Building Application                      **
-**                       Version: 0.3.01.506 (20150121)                       **
+**                       Version: 0.3.01.558 (20150122)                       **
 **                          File: static/js/main.js                           **
 **                                                                            **
 **               For more information about the project, visit                **
@@ -36,54 +36,95 @@ function main()
     'use strict';
 
     /* Application */
-    var fb = new g.formbuilder.FormBuilder({
+    var fb = new g.formbuilder.FormBuilder(
+    {
         classPrefix : 'fb',
-        languages   : {hu : 'Magyar',
-                       en : 'English'},
+        languages   :
+        {
+            hu : 'Magyar',
+            en : 'English'
+        },
     });
 
     /* Specify section-block */
-    fb.registerBlockPrototype({
-        object    : g.blocks.SingleTextInputBlock,
-        details   : {
+    fb.registerBlockPrototype(
+    {
+        object  : g.blocks.SingleTextInputBlock,
+        details :
+        {
             blockName   : 'Section Block',
             inputLabel  : 'Label:',
             inputText   : 'Title of this section...',
-        }}, 'section');
-
+        }
+    },
+    'section');
 
     /* Specify label-block */
-    fb.registerBlockPrototype({
-        object    : g.blocks.SingleTextInputBlockWithHelp,
-        details   : {
+    fb.registerBlockPrototype(
+    {
+        object  : g.blocks.SingleTextInputBlockWithHelp,
+        details :
+        {
             blockName   : 'Question Block',
             inputLabel  : 'Question:',
             inputText   : 'A question goes here...',
             helpText    : 'Add hints to this question...',
-        }}, 'question');
+        }
+    },
+    'question');
 
     /* Specify radio-block */
-    fb.registerBlockPrototype({
-        object    : g.blocks.ChoiceBlockWithHelp,
-        details   : {
+    fb.registerBlockPrototype(
+    {
+        object  : g.blocks.ChoiceBlockWithHelp,
+        details :
+        {
             blockName   : 'Radio-button Block',
             inputLabel  : 'Question:',
             inputText   : 'A question goes here...',
             helpText    : 'Add hints to this question...',
-        }}, 'radio');
+        }
+    },
+    'radio');
 
     /* Specify radio-block */
-    fb.registerBlockPrototype({
-        object    : g.blocks.GroupWithHelp,
-        details   : {
-            blockName   : 'Group Block',
-            inputLabel  : 'Question:',
-            inputText   : 'A question goes here...',
-            helpText    : 'Add hints to this question...',
-            /* TODO: add option `blockPrototypes` => can be a string, which is
-                     a reference to an existing block-prototype; or can be a
-                     full declaration of a block */
-        }}, 'group');
+    fb.registerBlockPrototype(
+    {
+        object  : g.collections.Collection,
+        details :
+        {
+            blockName       : 'Group Block',
+            inputLabel      : 'Question:',
+            inputText       : 'A question goes here...',
+            helpText        : 'Add hints to this question...',
+            blockPrototypes :
+            {
+                'group-question' :
+                {
+                    object  : g.blocks.SingleTextInputBlockWithHelp,
+                    details :
+                    {
+                        blockName  : 'Group-Question',
+                        inputLabel : 'Group Question Question:',
+                        inputText  : 'A group-question-question goes here...',
+                        helpText   : 'Add group-question-hints to this question...',
+                    }
+                },
+                'group-radio' :
+                {
+                    object  : g.blocks.ChoiceBlockWithHelp,
+                    details :
+                    {
+                        blockName  : 'Group-Radio',
+                        inputLabel : 'Group Radio Question:',
+                        inputText  : 'A group-radio-question goes here...',
+                        helpText   : 'Add group-radio-hints to this question...',
+                    }
+                },
+            },
+        }
+    },
+    'group');
 
 
     /* Render application */
@@ -93,12 +134,12 @@ function main()
     g.fb = fb;
 
     // HACK: for testing purposes only
-    fb.newBlockInstance('section');
-    fb.newBlockInstance('question');
-    var b = fb.newBlockInstance('radio');
-    for (var i=0; i<5; i++)
-        b.addVarUnit();
-    // fb.newBlockInstance('group')
+    // fb.newBlockInstance('section');
+    // fb.newBlockInstance('question');
+    // var b = fb.newBlockInstance('radio');
+    // for (var i=0; i<5; i++)
+    //     b.addVarUnit();
+    fb.newBlockInstance('group')
 
 
     // >>> TODO:
