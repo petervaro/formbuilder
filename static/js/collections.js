@@ -4,7 +4,7 @@
 **                                ===========                                 **
 **                                                                            **
 **                      Online Form Building Application                      **
-**                       Version: 0.3.01.558 (20150122)                       **
+**                       Version: 0.3.01.568 (20150122)                       **
 **                       File: static/js/collections.js                       **
 **                                                                            **
 **               For more information about the project, visit                **
@@ -46,22 +46,13 @@ Collection: function (args)
     this._protoId = 0;
     /* Block-object prototypes */
     this._protos = args.blockPrototypes || {};
-    /* Identifier for instances of block-objects */
-    this._blockId = 0;
     /* Instanced block-objects */
     this._blocks = [];
 
     /* Set properties based on arguments */
     this._primary = args.primary;
     this._rootElement = args.rootElement;
-    this._classPrefix = args.classPrefix;
-
-
-    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.setId = function (blockId)
-    {
-        this._id = blockId;
-    };
+    this._classPrefix = args.classPrefix || '';
 
 
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
@@ -120,7 +111,6 @@ Collection: function (args)
         var block = new prototype.object(prototype.details);
 
         /* Provide new identifier to the new block-objct and store it */
-        block.setId(this._id++);
         block.setType(reference);
         block.setRoot(this);
         this._blocks.push(block);
@@ -154,7 +144,6 @@ Collection: function (args)
 
         /* Reset storage and counter */
         this._blocks = [];
-        this._blockId = 0;
     };
 
 
@@ -201,10 +190,10 @@ Collection: function (args)
 
 
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.render = function (menuElement, classPrefix)
+    this.render = function (parent)
     {
-        /* If menuElement did not set */
-        menuElement = menuElement || this._rootElement;
+        /* If parent is not passed */
+        parent = parent || this._rootElement;
 
         var i,
             div,
@@ -213,8 +202,10 @@ Collection: function (args)
             option,
             select,
             objectKeys,
-            subClassPrefix;
-            // classPrefix = this._classPrefix;
+            subClassPrefix,
+            classPrefix = this._classPrefix;
+
+        classPrefix += (classPrefix ? '-' : '') + 'menu-items';
 
         /* ---------------------
            Create menu-items-add */
@@ -256,7 +247,7 @@ Collection: function (args)
         /* Add newly created elements to structure */
         div.appendChild(select);
         div.appendChild(document.createTextNode('block'));
-        menuElement.appendChild(div);
+        parent.appendChild(div);
     };
 }
 

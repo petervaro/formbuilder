@@ -4,7 +4,7 @@
 **                                ===========                                 **
 **                                                                            **
 **                      Online Form Building Application                      **
-**                       Version: 0.3.01.558 (20150122)                       **
+**                       Version: 0.3.01.568 (20150122)                       **
 **                         File: static/js/blocks.js                          **
 **                                                                            **
 **               For more information about the project, visit                **
@@ -53,13 +53,6 @@ function FormBlockObject(args)
                 /* TODO: decide if we need to set this to:
                     (function () {window.setTimeout( <function goes here>, 0 );}) */
                 {click: (function () {this._root.removeBlockIstance(this);}).bind(this)}})];
-
-
-    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.setId = function (blockId)
-    {
-        this._id = blockId;
-    };
 
 
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
