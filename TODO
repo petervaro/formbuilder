@@ -4,7 +4,7 @@
 ##                                ===========                                 ##
 ##                                                                            ##
 ##                      Online Form Building Application                      ##
-##                       Version: 0.3.01.627 (20150126)                       ##
+##                       Version: 0.3.01.637 (20150126)                       ##
 ##                                 File: TODO                                 ##
 ##                                                                            ##
 ##               For more information about the project, visit                ##
@@ -27,7 +27,7 @@
 ##                                                                            ##
 ######################################################################## INFO ##
 
-#----------------------------- 7 POSTS IN 5 FILES -----------------------------#
+#----------------------------- 8 POSTS IN 6 FILES -----------------------------#
 TODO:
   #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
   # 1
@@ -81,6 +81,14 @@ TODO:
           decide if we need to set this to:
           (function () {window.setTimeout( <function goes here>, 0 );}) 
 
+  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
+  # 8
+  - file: static/js/main.js
+    line: 144
+    note: |
+          1) 'blocks' => `items' => rename everywhere even in serialisation
+          2) add render to container => remove render from Block and Collection
+
 
 
 #----------------------------- 2 POSTS IN 1 FILES -----------------------------#
@@ -98,11 +106,6 @@ HACK:
     line: 136
     note: |
           for testing purposes only
-          fb.newBlockInstance('section');
-          fb.newBlockInstance('question');
-          var b = fb.newBlockInstance('radio');
-          for (var i=0; i<5; i++)
-          b.addVarUnit();
 
 
 

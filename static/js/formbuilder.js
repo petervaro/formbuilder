@@ -4,7 +4,7 @@
 **                                ===========                                 **
 **                                                                            **
 **                      Online Form Building Application                      **
-**                       Version: 0.3.01.607 (20150126)                       **
+**                       Version: 0.3.01.635 (20150126)                       **
 **                       File: static/js/formbuilder.js                       **
 **                                                                            **
 **               For more information about the project, visit                **
@@ -136,7 +136,7 @@ FormBuilder: function (args)
         this.closeForm();
 
         /* Remove blocks from root collection */
-        this._rootCollection.removeAllBlockInstances();
+        this._rootCollection.delAllVarItems();
 
         /* Reset form-id, langauge and title */
         this._formId = id || undefined;
@@ -242,14 +242,24 @@ FormBuilder: function (args)
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
     this.deserialise = function ()
     {
-        return this._rootCollection.deserialise.apply(this._rootCollection, arguments);
+        /* Re/set basic informations */
+        this.resetForm.apply(this, arguments);
+
+        debug(new Error(), '[DESERIALISE] formId = ', arguments[0].formId);
+
+        return this._rootCollection.deserialise(arguments[0].form);
     };
 
 
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
     this.serialise = function ()
     {
-        return this._rootCollection.serialise.apply(this._rootCollection, arguments);
+        debug(new Error(), '[ SERIALISE ] formId = ', this._formId || null);
+
+        return {title  : this._title,
+                lang   : this._lang,
+                formId : this._formId || null,
+                form   : this._rootCollection.serialise.apply(this._rootCollection, arguments)};
     };
 
 

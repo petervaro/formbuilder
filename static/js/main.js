@@ -4,7 +4,7 @@
 **                                ===========                                 **
 **                                                                            **
 **                      Online Form Building Application                      **
-**                       Version: 0.3.01.558 (20150122)                       **
+**                       Version: 0.3.01.635 (20150126)                       **
 **                          File: static/js/main.js                           **
 **                                                                            **
 **               For more information about the project, visit                **
@@ -134,13 +134,15 @@ function main()
     g.fb = fb;
 
     // HACK: for testing purposes only
-    // fb.newBlockInstance('section');
-    // fb.newBlockInstance('question');
-    // var b = fb.newBlockInstance('radio');
-    // for (var i=0; i<5; i++)
-    //     b.addVarUnit();
+    fb.newBlockInstance('section');
+    fb.newBlockInstance('question');
+    var b = fb.newBlockInstance('radio');
+    for (var i=0; i<5; i++)
+        b.newVarItem();
     fb.newBlockInstance('group')
 
+    // TODO: 1) 'blocks' => `items' => rename everywhere even in serialisation
+    //       2) add render to container => remove render from Block and Collection
 
     // >>> TODO:
     //  1) Create all kinds of units

@@ -4,7 +4,7 @@
 **                                ===========                                 **
 **                                                                            **
 **                      Online Form Building Application                      **
-**                       Version: 0.3.01.624 (20150126)                       **
+**                       Version: 0.3.01.632 (20150126)                       **
 **                       File: static/js/collections.js                       **
 **                                                                            **
 **               For more information about the project, visit                **
@@ -199,11 +199,6 @@ Collection: function (args)
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
     this.deserialise = function (data)
     {
-        /* Re/set basic informations */
-        this.resetForm(data.lang, data.title, data.formId);
-
-        debug(new Error(), '[DESERIALISE] formId = ', data.formId);
-
         /* Rebuild form from serialised data */
         var block,
             blockData,
@@ -212,7 +207,7 @@ Collection: function (args)
         {
             /* Create new block */
             blockData = blocks[i];
-            block = this.newBlockInstance(blockData.type);
+            block = this.newVarItem(blockData.type);
             /* Pass serialised data to block */
             block.deserialise(blockData);
         }
@@ -229,13 +224,9 @@ Collection: function (args)
         for (var i=0; i<thisBlocks.length; i++)
             dataBlocks.push(thisBlocks[i].serialise());
 
-        debug(new Error(), '[ SERIALISE ] formId = ', this._formId || null);
-
         /* Return the serialisation */
-        return {title  : this._title,
-                lang   : this._lang,
-                formId : this._formId || null,
-                blocks : dataBlocks};
+        return {type   : this.getType(),
+                blocks : dataBlocks,};
     };
 
 

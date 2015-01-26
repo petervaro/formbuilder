@@ -4,7 +4,7 @@
 **                                ===========                                 **
 **                                                                            **
 **                      Online Form Building Application                      **
-**                       Version: 0.3.01.596 (20150126)                       **
+**                       Version: 0.3.01.629 (20150126)                       **
 **                        File: static/js/container.js                        **
 **                                                                            **
 **               For more information about the project, visit                **
@@ -178,8 +178,8 @@ Container: function (args)
             items = thisItems[i];
             for (j=0; j<data.length; j++)
             {
-                item = items[j] || func();
-                if (item.deserialise)
+                item = items[j] || func(data[j].type);
+                if (item && item.deserialise)
                     item.deserialise(data[j]);
             }
         }
