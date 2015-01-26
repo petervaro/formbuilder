@@ -4,7 +4,7 @@
 **                                ===========                                 **
 **                                                                            **
 **                      Online Form Building Application                      **
-**                       Version: 0.3.01.558 (20150122)                       **
+**                       Version: 0.3.01.607 (20150126)                       **
 **                       File: static/js/formbuilder.js                       **
 **                                                                            **
 **               For more information about the project, visit                **
@@ -63,13 +63,14 @@ FormBuilder: function (args)
     /* DOM parent for block items */
     variable = body.appendChild(document.createElement('div'));
     variable.id = classPrefix + (classPrefix ? '-' : '') + 'blocks';
+    this._blockParent = variable;
 
     /* Create main collection, which will
        collect blocks and other collections */
     this._rootCollection = new g.collections.Collection({
-        primary     : true,
-        rootElement : variable,
-        classPrefix : classPrefix,
+        notRemovable : true,
+        rootElement  : this._blockParent,
+        classPrefix  : classPrefix,
     });
 
     /* Set languages */
@@ -77,25 +78,12 @@ FormBuilder: function (args)
     this._languages = variable instanceof Object ? variable : {en: 'English'};
     this._lang = Object.keys(this._languages)[0];
 
-    // TODO: wrap methods of rootCollection programatically
-    // /* Wrap methods to create a consistent interface */
-    // var wrappedMethods = ['registerBlockPrototype',
-    //                       'newBlockInstance',
-    //                       'removeBlockIstance',
-    //                       'deserialise',
-    //                       'serialise',
-    //                       'render'];
-    //
-    // var method,
-    //     collection = this._rootCollection;
-    // for (var i=0; i<wrappedMethods.length; i++)
-    // {
-    //     method = wrappedMethods[i]
-    //     this[method] = (function ()
-    //     {
-    //         return collection[method].apply(collection, arguments);
-    //     }).bind(this);
-    // }
+
+    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    this.toString = function ()
+    {
+        return '[object formbuilder.FormBuilder]';
+    };
 
 
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
@@ -230,26 +218,24 @@ FormBuilder: function (args)
     };
 
 
-
-
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
     this.registerBlockPrototype = function ()
     {
-        return this._rootCollection.registerBlockPrototype.apply(this._rootCollection, arguments);
+        return this._rootCollection.registerVarItemPrototype.apply(this._rootCollection, arguments);
     };
 
 
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
     this.newBlockInstance = function ()
     {
-        return this._rootCollection.newBlockInstance.apply(this._rootCollection, arguments);
+        return this._rootCollection.newVarItem.apply(this._rootCollection, arguments);
     };
 
 
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
     this.removeBlockIstance = function ()
     {
-        return this._rootCollection.removeBlockIstance.apply(this._rootCollection, arguments);
+        return this._rootCollection.delVarItem.apply(this._rootCollection, arguments);
     };
 
 
@@ -289,7 +275,7 @@ FormBuilder: function (args)
         /* -----------------
            Create menu-items */
         var items = document.createElement('div');
-        items.className = classPrefix = classPrefix + '-items';
+        items.className = classPrefix += '-items';
 
         /* ----------------------
            Create menu-items-info */
@@ -357,13 +343,9 @@ FormBuilder: function (args)
         form.appendChild(div);
 
         /* Render collections' menu element */
-        this._rootCollection.render(items, classPrefix);
-
-        /* -----------------------------------------
-           Remove children from menu if there is any */
-        while (menu.firstChild)
-            menu.removeChild(menu.firstChild);
-        /* Add the new menu to DOM */
+        this._rootCollection.render({fixRoot : items,
+                                     optRoot : items,
+                                     varRoot : this._blockParent,});
         menu.appendChild(items);
     };
 },

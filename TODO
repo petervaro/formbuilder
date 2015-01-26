@@ -4,7 +4,7 @@
 ##                                ===========                                 ##
 ##                                                                            ##
 ##                      Online Form Building Application                      ##
-##                       Version: 0.3.01.570 (20150122)                       ##
+##                       Version: 0.3.01.627 (20150126)                       ##
 ##                                 File: TODO                                 ##
 ##                                                                            ##
 ##               For more information about the project, visit                ##
@@ -27,7 +27,7 @@
 ##                                                                            ##
 ######################################################################## INFO ##
 
-#----------------------------- 5 POSTS IN 5 FILES -----------------------------#
+#----------------------------- 7 POSTS IN 5 FILES -----------------------------#
 TODO:
   #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
   # 1
@@ -39,7 +39,7 @@ TODO:
   #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
   # 2
   - file: build.py
-    line: 45
+    line: 46
     note: |
           add `>>>` as `MARKER` => `this is where I left`
 
@@ -52,33 +52,31 @@ TODO:
 
   #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
   # 4
-  - file: static/js/formbuilder.js
-    line: 80
+  - file: static/js/blocks.js
+    line: 64
     note: |
-          wrap methods of rootCollection programatically
-          /* Wrap methods to create a consistent interface */
-          var wrappedMethods = ['registerBlockPrototype',
-                          'newBlockInstance',
-                          'removeBlockIstance',
-                          'deserialise',
-                          'serialise',
-                          'render'];
-          
-          var method,
-          collection = this._rootCollection;
-          for (var i=0; i<wrappedMethods.length; i++)
-          {
-          method = wrappedMethods[i]
-          this[method] = (function ()
-          {
-            return collection[method].apply(collection, arguments);
-          }).bind(this);
-          }
+          decide if we need to set this to:
+          (function () {window.setTimeout( <function goes here>, 0 );}) 
 
   #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
   # 5
   - file: static/js/blocks.js
-    line: 53
+    line: 74
+    note: |
+          handle this._optItems 
+
+  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
+  # 6
+  - file: static/js/collections.js
+    line: 76
+    note: |
+          decide if we need to set this to:
+          (function () {window.setTimeout( <function goes here>, 0 );}) 
+
+  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
+  # 7
+  - file: static/js/collections.js
+    line: 118
     note: |
           decide if we need to set this to:
           (function () {window.setTimeout( <function goes here>, 0 );}) 

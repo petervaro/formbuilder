@@ -4,7 +4,7 @@
 **                                ===========                                 **
 **                                                                            **
 **                      Online Form Building Application                      **
-**                       Version: 0.3.01.568 (20150122)                       **
+**                       Version: 0.3.01.624 (20150126)                       **
 **                       File: static/js/collections.js                       **
 **                                                                            **
 **               For more information about the project, visit                **
@@ -32,6 +32,8 @@
 'use strict';
 
 /* Include order check */
+if (!g.container)
+    throw "'collection.js' has to be placed after 'container.js'";
 if (!g.blocks)
     throw "'collections.js' has to be placed after 'blocks.js'";
 
@@ -42,49 +44,97 @@ var collections = {
 /*  */
 Collection: function (args)
 {
+    /* Initialisation */
+    g.container.Container.call(this, args);
+
+    this._hasVarItems = true;
+
     /* Automatic identifiers for prototypes of block-objects */
     this._protoId = 0;
     /* Block-object prototypes */
     this._protos = args.blockPrototypes || {};
-    /* Instanced block-objects */
-    this._blocks = [];
 
     /* Set properties based on arguments */
-    this._primary = args.primary;
-    this._rootElement = args.rootElement;
-    this._classPrefix = args.classPrefix || '';
+    this._rootElement  = args.rootElement;
+    this._classPrefix  = args.classPrefix || '';
+    this._notRemovable = args.notRemovable;
+
+    /* If collections is removable => add a remove button */
+    if (!this._notRemovable)
+        this._fixItems.push(
+            new g.units.TextButtonUnit(
+                {
+                    captionText : function ()
+                    {
+                        return 'remove';
+                    },
+                    classPrefix : (function ()
+                    {
+                        return this._classPrefix + '-remove';
+                    }).bind(this),
+                    eventCallbacks :
+                    /* TODO: decide if we need to set this to:
+                        (function () {window.setTimeout( <function goes here>, 0 );}) */
+                    {
+                        click: (function ()
+                        {
+                            this.getRoot().delVarItem(this);
+                        }).bind(this),
+                    },
+                }));
+
+    /* Add an 'add' button */
+    this._fixItems.push(
+        new g.units.TextButtonWithOptionsUnit(
+            {
+                preCaptionText : function ()
+                {
+                    return 'add new';
+                },
+                postCaptionText : function ()
+                {
+                    return 'block';
+                },
+                classPrefix : function ()
+                {
+                    return '';
+                },
+                optionTexts : (function ()
+                {
+                    var key,
+                        texts = [],
+                        protos = this._protos,
+                        protosKeys = Object.keys(protos);
+
+                    for (var i=0; i<protosKeys.length; i++)
+                    {
+                        key = protosKeys[i];
+                        texts.push([key, protos[key].details.blockName]);
+                    }
+
+                    return texts;
+                }).bind(this),
+                eventCallbacks :
+                /* TODO: decide if we need to set this to:
+                        (function () {window.setTimeout( <function goes here>, 0 );}) */
+                {
+                    click: (function (value)
+                    {
+                        this.newVarItem(value);
+                    }).bind(this)
+                }
+            }));
 
 
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.setType = function (blockType)
+    this.toString = function ()
     {
-        this._type = blockType;
+        return '[object collections.Collection]';
     };
 
 
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.setRoot = function (root)
-    {
-        this._root = root;
-    };
-
-
-    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.getRootElement = function ()
-    {
-        return this._rootElement;
-    };
-
-
-    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.setRootElement = function (rootElement)
-    {
-        this._rootElement = rootElement;
-    };
-
-
-    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.registerBlockPrototype = function (prototype, reference)
+    this.registerVarItemPrototype = function (prototype, reference)
     {
         /* Get or set reference, store prototype and return it*/
         reference = reference || this._protoId++;
@@ -104,46 +154,45 @@ Collection: function (args)
 
 
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.newBlockInstance = function (reference)
+    this.newVarItem = function (reference)
     {
         /* Get object-prototype and details and create a new instance */
         var prototype = this._protos[reference];
-        var block = new prototype.object(prototype.details);
+        var item = new prototype.object(prototype.details);
 
-        /* Provide new identifier to the new block-objct and store it */
-        block.setType(reference);
-        block.setRoot(this);
-        this._blocks.push(block);
-        block.setRootElement(this._rootElement);
+        /* Provide new identifier to the new item-objct and store it */
+        item.setType(reference);
+        item.setRoot(this);
+        this._varItems.push(item);
 
         /* Render HTML */
-        block.render(this._rootElement);
+        item.render({parentElement: this.getVarRootElement()});
 
-        /* Return new block object */
-        return block;
+        /* Return new item object */
+        return item;
     };
 
 
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.removeBlockIstance = function (block)
+    this.delVarItem = function (item)
     {
         /* Remove from DOM */
-        this._rootElement.removeChild(block.getRootElement());
+        this.getVarRootElement().removeChild(item.getRootElement());
         /* Remove from structure */
-        this._blocks.splice(this._blocks.indexOf(block));
+        this._varItems.splice(this._varItems.indexOf(item));
     };
 
 
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.removeAllBlockInstances = function ()
+    this.delAllVarItems = function ()
     {
         /* Remove existing data */
-        var rootElement = this._rootElement;
+        var rootElement = this.getRootElement();
         while (rootElement.firstChild)
             rootElement.removeChild(rootElement.firstChild);
 
         /* Reset storage and counter */
-        this._blocks = [];
+        this._varItems = [];
     };
 
 
@@ -152,7 +201,8 @@ Collection: function (args)
     {
         /* Re/set basic informations */
         this.resetForm(data.lang, data.title, data.formId);
-        console.log('[DESERIALISE] formId = ', data.formId);
+
+        debug(new Error(), '[DESERIALISE] formId = ', data.formId);
 
         /* Rebuild form from serialised data */
         var block,
@@ -173,13 +223,13 @@ Collection: function (args)
     this.serialise = function ()
     {
         var dataBlocks = [],
-            thisBlocks = this._blocks;
+            thisBlocks = this._varItems;
 
         /* Collect all data from blocks */
         for (var i=0; i<thisBlocks.length; i++)
             dataBlocks.push(thisBlocks[i].serialise());
 
-        console.log('[ SERIALISE ] formId = ', this._formId || null);
+        debug(new Error(), '[ SERIALISE ] formId = ', this._formId || null);
 
         /* Return the serialisation */
         return {title  : this._title,
@@ -190,64 +240,112 @@ Collection: function (args)
 
 
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.render = function (parent)
+    this.render = function (args)
     {
-        /* If parent is not passed */
-        parent = parent || this._rootElement;
-
         var i,
-            div,
-            key,
-            object,
-            option,
-            select,
-            objectKeys,
-            subClassPrefix,
-            classPrefix = this._classPrefix;
+            items,
+            parent  = args.parentElement,
+            root    = args.rootElement,
+            fixRoot = args.fixRoot,
+            optRoot = args.optRoot,
+            varRoot = args.varRoot;
 
-        classPrefix += (classPrefix ? '-' : '') + 'menu-items';
-
-        /* ---------------------
-           Create menu-items-add */
-        div = document.createElement('div');
-        div.className = subClassPrefix = classPrefix + '-add';
-        div.appendChild(document.createTextNode('append new'));
-
-        /* -----------------------------
-           Create menu-items-add-options */
-        select = document.createElement('select');
-        select.className = subClassPrefix + '-options';
-
-        /* If clicking on the selection */
-        select.addEventListener('click',
-        function (event)
+        /* If removable */
+        if (!this._notRemovable)
         {
-            event.stopPropagation();
-        });
+            if (!parent)
+                throw 'Collection.render() missing parent argument';
 
-        /* Construct options in selection */
-        object = this._protos;
-        objectKeys = Object.keys(object);
-        for (i=0; i<objectKeys.length; i++)
-        {
-            key = objectKeys[i];
-            option = document.createElement('option');
-            option.value = key;
-            option.innerHTML = object[key].details.blockName;
-            select.appendChild(option);
+            /* Create root if it is not defined */
+            if (!root)
+            {
+                root = document.createElement('div');
+                root.className = this._classPrefix;
+                parent.appendChild(root);
+            }
+            this.setRootElement(root);
         }
 
-        /* If clicking on the add-div itself */
-        div.addEventListener('click',
-        (function ()
+        /* Create fixed items */
+        if (!fixRoot)
         {
-            this.newBlockInstance(select.value);
-        }).bind(this, select));
+            fixRoot = document.createElement('div');
+            fixRoot.className = this._classPrefix + '-fix';
+            root.appendChild(fixRoot);
+        }
+        this.setFixRootElement(fixRoot);
 
-        /* Add newly created elements to structure */
-        div.appendChild(select);
-        div.appendChild(document.createTextNode('block'));
-        parent.appendChild(div);
+        items = this._fixItems;
+        for (i=0; i<items.length; i++)
+            items[i].render(fixRoot);
+
+        /* If there are optional items */
+        items = this._optItems;
+        if (items.length)
+        {
+            if (!optRoot)
+            {
+                optRoot = document.createElement('div');
+                optRoot.className = this._classPrefix + '-opt';
+                root.appendChild(optRoot);
+            }
+            this.setOptRootElement(optRoot);
+
+            for (i=0; i<items.length; i++)
+                items[i].render(optRoot);
+        }
+
+        /* If there are variable number items */
+        items = this._varItems;
+        if (this._hasVarItems)
+        {
+            if (!varRoot)
+            {
+                varRoot = document.createElement('div');
+                varRoot.className = this._classPrefix + '-var';
+                root.appendChild(varRoot);
+            }
+            this.setVarRootElement(varRoot);
+
+            for (i=0; i<items.length; i++)
+                items[i].render(varRoot);
+        }
+
+        // var elems = [fixRoot,
+        //              optRoot,
+        //              varRoot,];
+
+        // function newElementInRoot(setterFunc)
+        // {
+        //     var div = setterFunc(document.createElement('div'));
+        //     root.appendChild(div);
+        //     return div;
+        // }
+
+        // var i,
+        //     j,
+        //     div,
+        //     item,
+        //     items = [this._fixItems,
+        //              this._optItems,
+        //              this._varItems,],
+        //     funcs = [this.setFixRootElement,
+        //              this.setOptRootElement,
+        //              this.setVarRootElement,],
+        //     classPrefix = this._classPrefix,
+        //     prefs = [classPrefix + '-fix',
+        //              classPrefix + '-opt',
+        //              classPrefix + '-var',];
+
+        // for (i=0; i<items.length; i++)
+        // {
+        //     item = items[i];
+        //     div  = elems[i] || newElementInRoot(funcs[i]);
+        //     for (j=0; j<item.length; j++)
+        //     {
+        //         item[j].render(div);
+        //     }
+        // }
     };
 }
 

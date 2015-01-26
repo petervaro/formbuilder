@@ -4,7 +4,7 @@
 **                                ===========                                 **
 **                                                                            **
 **                      Online Form Building Application                      **
-**                       Version: 0.3.01.568 (20150122)                       **
+**                       Version: 0.3.01.620 (20150126)                       **
 **                         File: static/js/blocks.js                          **
 **                                                                            **
 **               For more information about the project, visit                **
@@ -31,6 +31,8 @@
 'use strict';
 
 /* Include order check */
+if (!g.container)
+    throw "'blocks.js' has to be placed after 'container.js'";
 if (!g.units)
     throw "'blocks.js' has to be placed after 'units.js'";
 
@@ -39,139 +41,112 @@ if (!g.units)
 /*----------------------------------------------------------------------------*/
 /* Base-class of all block-objects, requires:
     - blockName */
-function FormBlockObject(args)
+function Block(args)
 {
+    /* Initialisation */
+    g.container.Container.call(this, args);
+
     /* Set default values */
     this._name  = args.blockName || 'Unnamed Block';
     this._classPrefix = (args.classPrefix || '') + '-block';
-    this._varUnits = [];
-    this._fixUnits = [
+    this._fixItems.push(
         new g.units.TextButtonUnit(
-            {captionText: 'remove',
-             classPrefix: this._classPrefix + '-remove',
-             eventCallbacks:
+            {
+                captionText : function ()
+                {
+                    return 'remove';
+                },
+                classPrefix : (function ()
+                {
+                    return this._classPrefix + '-remove';
+                }).bind(this),
+                eventCallbacks :
                 /* TODO: decide if we need to set this to:
                     (function () {window.setTimeout( <function goes here>, 0 );}) */
-                {click: (function () {this._root.removeBlockIstance(this);}).bind(this)}})];
+                {
+                    click : (function ()
+                    {
+                        this._root.delVarItem(this);
+                    }).bind(this)
+                }
+            }));
+
+    /* TODO: handle this._optItems */
 
 
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.setType = function (blockType)
+    this.toString = function ()
     {
-        this._type = blockType;
+        return '[object Block]';
     };
 
 
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.setRoot = function (root)
-    {
-        this._root = root;
-    };
-
-
-    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.getRootElement = function ()
-    {
-        return this._rootElement;
-    };
-
-
-    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.setRootElement = function (rootElement)
-    {
-        this._rootElement = rootElement;
-    };
-
-
-    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.serialise = function ()
-    {
-        var dataUnits = [],
-            thisUnits = [this._fixUnits, this._varUnits];
-
-        /* Collect all data from units */
-        var j,
-            data,
-            unit,
-            units;
-        for (var i=0; i<thisUnits.length; i++)
-        {
-            data  = [];
-            units = thisUnits[i];
-            for (j=0; j<units.length; j++)
-            {
-                unit = units[j];
-                if (unit.serialise)
-                    data.push(units[j].serialise());
-            }
-            if (data.length)
-                dataUnits.push(data);
-        }
-
-        /* Return the serialisation */
-        return {type  : this._type,
-                units : dataUnits};
-    };
-
-
-    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.deserialise = function (inputData)
-    {
-        var thisUnits = [this._fixUnits, this._varUnits],
-            dataUnits = inputData.units;
-
-        /* Pass serialised data back to the units */
-        var j,
-            data,
-            unit,
-            units;
-        for (var i=0; i<thisUnits.length; i++)
-        {
-            data  = dataUnits[i] || [];
-            units = thisUnits[i];
-            for (j=0; j<data.length; j++)
-            {
-                unit = units[j] || this.addVarUnit();
-                if (unit.deserialise)
-                    unit.deserialise(data[j]);
-            }
-        }
-    };
-
-
-    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.render = function (parent)
+    this.render = function (args)
     {
         var i,
-            units,
-            element,
-            elements;
+            items,
+            parent  = args.parentElement,
+            root    = args.rootElement,
+            fixRoot = args.fixRoot,
+            optRoot = args.optRoot,
+            varRoot = args.varRoot;
 
-        /* Create container for fix and variable unit containers */
-        elements = this._rootElement = document.createElement('div');
-        elements.className = this._classPrefix;
-        parent.appendChild(elements);
+        if (!parent)
+            throw 'Block.render() missing parent argument';
 
-        /* Create container for fix units */
-        element = this._fixUnitsElement = document.createElement('div');
-        element.className = this._classPrefix + '-fix';
-        elements.appendChild(element);
-
-        /* Build fixed units */
-        units = this._fixUnits;
-        for (i=0; i<units.length; i++)
-            units[i].render(element);
-
-        /* Create container for variable unit and
-           build variable units if block has any */
-        if (this._hasVarUnits)
+        /* Create root if it is not defined */
+        if (!root)
         {
-            element = this._varUnitsElement = document.createElement('div');
-            element.className = this._classPrefix + '-var';
-            elements.appendChild(element);
-            units = this._varUnits;
-            for (i=0; i<units.length; i++)
-                units[i].render(element);
+            root = document.createElement('div');
+            root.className = this._classPrefix;
+            parent.appendChild(root);
+        }
+        this.setRootElement(root);
+
+        /* Create fixed items */
+        if (!fixRoot)
+        {
+            fixRoot = document.createElement('div');
+            fixRoot.className = this._classPrefix + '-fix';
+            root.appendChild(fixRoot);
+        }
+        this.setFixRootElement(fixRoot);
+
+        items = this._fixItems;
+        for (i=0; i<items.length; i++)
+            items[i].render(fixRoot);
+
+        /* If there are optional items */
+        items = this._optItems;
+        if (items.length)
+        {
+            if (!optRoot)
+            {
+                optRoot = document.createElement('div');
+                optRoot.className = this._classPrefix + '-opt';
+                root.appendChild(optRoot);
+            }
+            this.setOptRootElement(optRoot);
+
+            for (i=0; i<items.length; i++)
+                items[i].render(optRoot);
+        }
+
+        /* If there are variable number items */
+        items = this._varItems;
+        if (this._hasVarItems)
+        {
+            if (!varRoot)
+            {
+                varRoot = document.createElement('div');
+                varRoot.className = this._classPrefix + '-var';
+                root.appendChild(varRoot);
+            }
+            this.setVarRootElement(varRoot);
+
+            for (i=0; i<items.length; i++)
+                items[i].render(varRoot);
         }
     };
 }
@@ -191,17 +166,40 @@ SingleTextInputBlock: function (args)
 {
     /* Initialisation */
     args = args || {};
-    FormBlockObject.call(this, args);
+    Block.call(this, args);
 
     /* Set inputs of this block */
-    this._fixUnits.push(
+    this._fixItems.push(
         new g.units.StaticTextUnit(
-            {captionText: args.inputLabel,
-             classPrefix: this._classPrefix}));
-    this._fixUnits.push(
+            {
+                captionText : function ()
+                {
+                    return args.inputLabel;
+                },
+                classPrefix : (function () {
+                    return this._classPrefix;
+                }).bind(this)
+            }));
+
+    this._fixItems.push(
         new g.units.SingleLineTextInputUnit(
-            {defaultText: args.inputText,
-             classPrefix: this._classPrefix}));
+            {
+                defaultText : function ()
+                {
+                    return args.inputText;
+                },
+                classPrefix : (function ()
+                {
+                    return this._classPrefix;
+                }).bind(this),
+            }));
+
+
+    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    this.toString = function ()
+    {
+        return '[object blocks.SingleTextInputBlock]';
+    };
 },
 
 
@@ -216,21 +214,56 @@ SingleTextInputBlockWithHelp: function (args)
 {
     /* Initialisation */
     args = args || {};
-    FormBlockObject.call(this, args);
+    Block.call(this, args);
 
-    /* Set inputs of this block */
-    this._fixUnits.push(
+    /* Setup label of block */
+    this._fixItems.push(
         new g.units.StaticTextUnit(
-            {captionText: args.inputLabel,
-             classPrefix: this._classPrefix}));
-    this._fixUnits.push(
+            {
+                captionText : function ()
+                {
+                    return args.inputLabel;
+                },
+                classPrefix : (function ()
+                {
+                    return this._classPrefix;
+                }).bind(this),
+            }));
+
+    /* Setup main-input (eg. a question) */
+    this._fixItems.push(
         new g.units.MultiLineTextInputUnit(
-            {defaultText: args.inputText,
-             classPrefix: this._classPrefix}));
-    this._fixUnits.push(
+            {
+                defaultText : function ()
+                {
+                    return args.inputText;
+                },
+                classPrefix : (function ()
+                {
+                    return this._classPrefix;
+                }).bind(this),
+            }));
+
+    /* Setup sub-input (eg. a question's hint) */
+    this._fixItems.push(
         new g.units.SingleLineTextInputUnit(
-            {defaultText: args.helpText,
-             classPrefix: this._classPrefix}));
+            {
+                defaultText : function ()
+                {
+                    return args.helpText;
+                },
+                classPrefix : (function ()
+                {
+                    return this._classPrefix;
+                }).bind(this),
+            }));
+
+
+    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    this.toString = function ()
+    {
+        return '[object blocks.SingleTextInputBlockWithHelp]';
+    };
 },
 
 
@@ -241,52 +274,142 @@ ChoiceBlockWithHelp: function (args)
 {
     /* Initialisation: Part 1 */
     args = args || {};
-    FormBlockObject.call(this, args);
-    this._hasVarUnits = true;
+    Block.call(this, args);
+    this._hasVarItems = true;
 
-    /* Set inputs of this block */
-    this._fixUnits.push(
+    /* Setup label of block */
+    this._fixItems.push(
         new g.units.StaticTextUnit(
-            {captionText: args.inputLabel,
-             classPrefix: this._classPrefix}));
-    this._fixUnits.push(
+            {
+                captionText : function ()
+                {
+                    return args.inputLabel;
+                },
+                classPrefix : (function ()
+                {
+                    return this._classPrefix;
+                }).bind(this),
+            }));
+
+    /* Setup main-input (eg. a question) */
+    this._fixItems.push(
         new g.units.MultiLineTextInputUnit(
-            {defaultText: args.inputText,
-             classPrefix: this._classPrefix}));
-    this._fixUnits.push(
+            {
+                defaultText : function ()
+                {
+                    return args.inputText;
+                },
+                classPrefix : (function ()
+                {
+                    return this._classPrefix;
+                }).bind(this),
+            }));
+
+    /* Setup sub-input (eg. a question's hint) */
+    this._fixItems.push(
         new g.units.SingleLineTextInputUnit(
-            {defaultText: args.helpText,
-             classPrefix: this._classPrefix}));
-    this._fixUnits.push(
+            {
+                defaultText : function ()
+                {
+                    return args.helpText;
+                },
+                classPrefix : (function ()
+                {
+                    return this._classPrefix;
+                }).bind(this),
+            }));
+
+    /* Setup variable number of inputs' add button */
+    this._fixItems.push(
         new g.units.TextButtonUnit(
-            {captionText: 'append',
-             classPrefix: this._classPrefix + '-option-append',
-             eventCallbacks: {click: (function () {this.addVarUnit();}).bind(this)}}));
-    this._fixUnits.push(
+            {
+                captionText : function ()
+                {
+                    return 'append';
+                },
+                classPrefix : (function ()
+                {
+                    return this._classPrefix + '-option-append';
+                }).bind(this),
+                eventCallbacks :
+                {
+                    click: (function ()
+                    {
+                        this.newVarItem();
+                    }).bind(this),
+                },
+            }));
+
+    /* Setup variable number of inputs' remove button */
+    this._fixItems.push(
         new g.units.TextButtonUnit(
-            {captionText: 'remove',
-             classPrefix: this._classPrefix + '-option-remove',
-             eventCallbacks: {click: (function () {this.removeVarUnit();}).bind(this)}}));
+            {
+                captionText : function ()
+                {
+                    return 'remove';
+                },
+                classPrefix : (function ()
+                {
+                    return this._classPrefix + '-option-remove';
+                }).bind(this),
+                eventCallbacks :
+                {
+                    click: (function ()
+                    {
+                        this.delVarItem();
+                    }).bind(this),
+                },
+            }));
 
 
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.addVarUnit = function ()
+    this.toString = function ()
     {
-        var i    = this._varUnits.length + 1,
-            unit = new g.units.SingleLineTextInputUnit({defaultText: 'option ' + i,
-                                                        classPrefix: this._classPrefix});
-        this._varUnits.push(unit);
-        unit.render(this._varUnitsElement);
+        return '[object blocks.ChoiceBlockWithHelp]';
+    };
+
+
+    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    this.newVarItem = function ()
+    {
+        var unit = new g.units.SingleLineTextInputUnit(
+            {
+                defaultText : (function ()
+                {
+                    return 'option ' + (this._varItems.length + 1);
+                }).bind(this),
+                classPrefix : (function ()
+                {
+                    return this._classPrefix;
+                }).bind(this),
+            });
+
+        this._varItems.push(unit);
+        unit.render(this.getVarRootElement());
         return unit;
     };
 
 
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    this.removeVarUnit = function ()
+    this.delVarItem = function ()
     {
-        this._varUnits.pop();
-        if (this._varUnitsElement.lastChild)
-            this._varUnitsElement.removeChild(this._varUnitsElement.lastChild);
+        this._varItems.pop();
+        var varRootElement = this.getVarRootElement();
+        if (varRootElement.lastChild)
+            varRootElement.removeChild(varRootElement.lastChild);
+    };
+
+
+    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    this.delAllVarItems = function ()
+    {
+        /* Remove elements from varItems' parent DOM object */
+        var varRootElement = this.getVarRootElement();
+        while (varRootElement.firstChild)
+            varRootElement.removeChild(varRootElement.firstChild);
+
+        /* Reset storage */
+        this._varItems = [];
     };
 },
 
